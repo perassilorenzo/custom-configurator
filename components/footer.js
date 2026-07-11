@@ -25,8 +25,8 @@ export function renderFooter() {
       <div>
         <h4>Info</h4>
         <a href="mailto:lorenzo@example.com">Email</a><br>
-        <a href="#">Privacy</a><br>
-        <a href="#">Termini</a>
+        <a href="#/privacy">Privacy</a><br>
+        <a href="#/terms">Termini</a>
       </div>
     </div>
     <div class="footer-bottom" style="text-align:center;justify-content:center">
