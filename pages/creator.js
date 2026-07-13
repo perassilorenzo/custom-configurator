@@ -280,15 +280,18 @@ function renderPortfolioModal(p, c) {
     </div>`;
 }
 
-function renderImageGalleryModal(media) {
+function renderImageGalleryModal(media, autoPlay) {
   if (!media || !media.length) return "";
   const first = media[0];
+  const vidAttrs = autoPlay
+    ? "autoplay muted loop playsinline"
+    : "controls playsinline";
   const mainContent = isMov(first)
-    ? `<video src="${first}" controls playsinline></video>`
+    ? `<video src="${first}" ${vidAttrs}></video>`
     : `<img src="${first}" alt="">`;
   const hasGallery = media.length > 1;
   return `
-    <div class="image-gallery-overlay" data-image-gallery-modal>
+    <div class="image-gallery-overlay" data-image-gallery-modal${autoPlay ? " data-autoplay" : ""}>
       <button class="image-gallery-close" data-close-image-gallery>&times;</button>
       <div class="image-gallery-content">
         <div class="image-gallery-main" data-media-index="0">
@@ -949,7 +952,7 @@ export function initCreator() {
       }
     }
 
-    /* Portfolio sold item click -> open image gallery */
+    /* Portfolio sold item click -> open video gallery (autoplay, no controls) */
     const portfolioSold = e.target.closest("[data-portfolio-sold]");
     if (
       portfolioSold &&
@@ -962,13 +965,14 @@ export function initCreator() {
       const c = getCustomizer(cid);
       const p = c && c.products ? c.products.find((x) => x.id === pid) : null;
       if (c && p) {
-        const media = p.image
+        const all = p.image
           ? [p.image, ...(p.gallery || [])]
           : [...(p.gallery || [])];
-        if (media.length) {
+        const vids = all.filter((m) => isMov(m));
+        if (vids.length) {
           document.body.insertAdjacentHTML(
             "beforeend",
-            renderImageGalleryModal(media),
+            renderImageGalleryModal(vids, true),
           );
         }
       }
@@ -1015,8 +1019,12 @@ export function initCreator() {
         inline: "center",
       });
       const src = items[idx];
+      const ap = modal.hasAttribute("data-autoplay");
+      const va = ap
+        ? "autoplay muted loop playsinline"
+        : "controls playsinline";
       mainEl.innerHTML = isMov(src)
-        ? `<video src="${src}" controls playsinline></video>`
+        ? `<video src="${src}" ${va}></video>`
         : `<img src="${src}" alt="">`;
       mainEl.dataset.mediaIndex = idx;
     }
@@ -1038,8 +1046,12 @@ export function initCreator() {
         .forEach((t) => t.classList.remove("active"));
       iThumb.classList.add("active");
       const src = items[idx];
+      const ap = modal.hasAttribute("data-autoplay");
+      const va = ap
+        ? "autoplay muted loop playsinline"
+        : "controls playsinline";
       mainEl.innerHTML = isMov(src)
-        ? `<video src="${src}" controls playsinline></video>`
+        ? `<video src="${src}" ${va}></video>`
         : `<img src="${src}" alt="">`;
       mainEl.dataset.mediaIndex = idx;
     }
@@ -1186,6 +1198,64 @@ export function initCreator() {
     ) {
       document.querySelector("[data-thankyou-modal]")?.remove();
       return;
+    }
+  });
+
+  /* Keyboard navigation for galleries and modals */
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      const igModal = document.querySelector("[data-image-gallery-modal]");
+      if (igModal) {
+        const btn = igModal.querySelector(
+          e.key === "ArrowRight"
+            ? "[data-image-gallery-next]"
+            : "[data-image-gallery-prev]",
+        );
+        if (btn) btn.click();
+        return;
+      }
+      const pModal = document.querySelector("[data-product-modal]");
+      if (pModal) {
+        const btn = pModal.querySelector(
+          e.key === "ArrowRight"
+            ? "[data-gallery-next]"
+            : "[data-gallery-prev]",
+        );
+        if (btn) btn.click();
+        return;
+      }
+    }
+    if (e.key === "Escape") {
+      const igModal = document.querySelector("[data-image-gallery-modal]");
+      if (igModal) {
+        igModal.remove();
+        return;
+      }
+      const fsOverlay = document.querySelector("[data-fullscreen-overlay]");
+      if (fsOverlay) {
+        fsOverlay.remove();
+        return;
+      }
+      const pModal = document.querySelector("[data-product-modal]");
+      if (pModal) {
+        pModal.remove();
+        return;
+      }
+      const iModal = document.querySelector("[data-inquiry-modal]");
+      if (iModal) {
+        iModal.remove();
+        return;
+      }
+      const purModal = document.querySelector("[data-purchase-modal]");
+      if (purModal) {
+        purModal.remove();
+        return;
+      }
+      const tyModal = document.querySelector("[data-thankyou-modal]");
+      if (tyModal) {
+        tyModal.remove();
+        return;
+      }
     }
   });
 
