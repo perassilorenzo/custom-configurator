@@ -391,7 +391,7 @@ function renderPortfolio(c) {
               ${p.images && p.images.length ? `<img src="${p.images[0]}" alt="${esc(p.title)}">` : "&#9632;"}
             </div>
             <div class="creator-portfolio-body">
-              <h4>${esc(p.title)}</h4>
+              <h4>${p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">${esc(p.title)}</a>` : esc(p.title)}</h4>
               <p>${esc(p.description)}</p>
               ${
                 p.techniques && p.techniques.length
@@ -942,12 +942,12 @@ export function initCreator() {
         : null;
       const c = cid ? getCustomizer(cid) : null;
       const item = c && c.portfolio ? c.portfolio[idx] : null;
-      const media =
-        item && item.images && item.images.length ? item.images : [];
-      if (media.length) {
+      const all = item && item.images && item.images.length ? item.images : [];
+      const vids = all.filter((m) => isMov(m));
+      if (vids.length) {
         document.body.insertAdjacentHTML(
           "beforeend",
-          renderImageGalleryModal(media),
+          renderImageGalleryModal(vids, true),
         );
       }
     }

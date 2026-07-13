@@ -137,11 +137,12 @@ export const customizer = {
       techniques: ["Upcycling", "Jeans", "Skinny to Flare"],
     },
     {
-      title: "CRYBU Collaboration",
+      title: "@crybu",
       description:
         "Collaborazione creativa di fashion design e sartoria. Design, prototipazione e creazione delle camicie per gli investitori di CRYBU S.R.L.",
       images: ["customizers/lorenzo-perassi/images/crybu-design.png"],
       techniques: ["Fashion Design", "Prototipazione", "Produzione Sartoriale"],
+      link: "https://crybu.it",
     },
   ],
   process: [

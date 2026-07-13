@@ -2908,6 +2908,14 @@ footer a:hover {
   letter-spacing: 0.03em;
   margin-bottom: 6px;
 }
+.creator-portfolio-body h4 a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.creator-portfolio-body h4 a:hover {
+  color: var(--accent);
+}
 .creator-portfolio-body p {
   font-size: 13px;
   color: var(--text-tertiary);
