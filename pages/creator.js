@@ -944,10 +944,11 @@ export function initCreator() {
       const item = c && c.portfolio ? c.portfolio[idx] : null;
       const all = item && item.images && item.images.length ? item.images : [];
       const vids = all.filter((m) => isMov(m));
-      if (vids.length) {
+      const media = vids.length ? vids : all;
+      if (media.length) {
         document.body.insertAdjacentHTML(
           "beforeend",
-          renderImageGalleryModal(vids, true),
+          renderImageGalleryModal(media, vids.length > 0),
         );
       }
     }
@@ -1056,7 +1057,7 @@ export function initCreator() {
       mainEl.dataset.mediaIndex = idx;
     }
 
-    /* Product modal main image click -> open video gallery (autoplay, muted) */
+    /* Product modal main image click -> open gallery (videos autoplay, images fallback) */
     if (
       e.target.closest("[data-fullscreen-trigger]") &&
       !e.target.closest("[data-image-gallery-modal]")
@@ -1076,10 +1077,11 @@ export function initCreator() {
       }
       if (items && items.length) {
         const vids = items.filter((m) => isMov(m));
-        if (vids.length) {
+        const media = vids.length ? vids : items;
+        if (media.length) {
           document.body.insertAdjacentHTML(
             "beforeend",
-            renderImageGalleryModal(vids, true),
+            renderImageGalleryModal(media, vids.length > 0),
           );
         }
       }
