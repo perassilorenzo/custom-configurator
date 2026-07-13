@@ -145,39 +145,60 @@ nav .container {
 .nav-links a.active {
   color: var(--accent);
 }
-.theme-switch {
-  display: flex;
-  border: 1px solid var(--border);
-}
-.theme-opt {
-  padding: 6px 14px;
-  font-family: var(--font-heading);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-tertiary);
-  background: transparent;
-  border: none;
+.theme-btn {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-alt);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+.theme-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  right: 4px;
+  height: 0;
+  border-top: 1.5px dashed var(--border);
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.5;
+}
+.theme-btn.dark {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.theme-btn.dark::before {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.theme-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-card);
   display: flex;
   align-items: center;
-  gap: 4px;
-  line-height: 1;
+  justify-content: center;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  color: var(--text-secondary);
 }
-.theme-opt + .theme-opt {
-  border-left: 1px solid var(--border);
-}
-.theme-opt:hover {
+.theme-btn.dark .theme-knob {
+  left: 27px;
   color: var(--accent);
 }
-.theme-opt.active {
-  background: var(--accent);
-  color: var(--bg);
+.theme-btn:hover .theme-knob {
+  transform: scale(1.08);
 }
-.theme-label {
-  font-size: 11px;
+.theme-btn:active .theme-knob {
+  width: 24px;
 }
 .mobile-toggle {
   display: none;
@@ -206,12 +227,6 @@ nav .container {
   }
   .mobile-toggle {
     display: block;
-  }
-  .theme-label {
-    display: none;
-  }
-  .theme-opt {
-    padding: 6px 10px;
   }
 }
 

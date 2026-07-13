@@ -17,8 +17,8 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      import { route, init } from "./utils/router.js";
-      import { renderNav, initNav } from "./components/navbar.js";
+      import { route, init, afterRender } from "./utils/router.js";
+      import { renderNav, initNav, reinitNav } from "./components/navbar.js";
       import { renderFooter } from "./components/footer.js";
       import { renderHome, initHome } from "./pages/home.js";
       import {
@@ -52,6 +52,7 @@
 
       init(document.getElementById("app"));
       initNav();
+      afterRender(reinitNav);
     </script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 const routes = {};
 const dynamicRoutes = [];
 let outlet = null;
+let afterRenderCb = null;
 
 export function route(path, render) {
   if (path.includes(":")) {
@@ -19,6 +20,10 @@ export function route(path, render) {
   } else {
     routes[path] = render;
   }
+}
+
+export function afterRender(fn) {
+  afterRenderCb = fn;
 }
 
 export function init(el) {
@@ -71,6 +76,7 @@ function resolve() {
     outlet.innerHTML = render(ctx);
     if (window._pageInit) window._pageInit(ctx);
     updateActiveLink(path);
+    if (afterRenderCb) afterRenderCb();
   }
 }
 
