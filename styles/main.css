@@ -3739,6 +3739,10 @@ footer a:hover {
 /* Sold items in portfolio */
 .creator-portfolio-item--sold {
   position: relative;
+  cursor: pointer;
+}
+.creator-portfolio-item--sold:hover {
+  border-color: var(--accent);
 }
 .creator-portfolio-item--sold .creator-portfolio-image {
   position: relative;

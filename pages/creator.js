@@ -225,6 +225,59 @@ function renderProductModal(p, c) {
     </div>`;
 }
 
+function renderPortfolioModal(p, c) {
+  const allMedia = p.image
+    ? [p.image, ...(p.gallery || [])]
+    : [...(p.gallery || [])];
+  const mainMedia = allMedia.length
+    ? allMedia[0].endsWith(".mov")
+      ? `<video src="${allMedia[0]}" controls playsinline></video>`
+      : `<img src="${allMedia[0]}" alt="${esc(p.name)}">`
+    : `<div class="product-modal-placeholder">&#9632;</div>`;
+  const hasGallery = allMedia.length > 1;
+  return `
+    <div class="product-modal-overlay" data-portfolio-modal>
+      <div class="product-modal">
+        <button class="product-modal-close" data-close-portfolio-modal>&times;</button>
+        <div class="product-modal-grid">
+          <div class="product-modal-images">
+            <div class="product-modal-main-image" data-media-index="0">
+              ${mainMedia}
+            </div>
+            ${
+              hasGallery
+                ? `
+              <button class="product-modal-arrow product-modal-arrow--left" data-portfolio-gallery-prev>&lsaquo;</button>
+              <button class="product-modal-arrow product-modal-arrow--right" data-portfolio-gallery-next>&rsaquo;</button>
+              <div class="product-modal-gallery" data-gallery-items='${JSON.stringify(allMedia)}'>
+                ${allMedia
+                  .map((m, i) => {
+                    const isMov = m && m.endsWith(".mov");
+                    return `<div class="product-modal-thumb${i === 0 ? " active" : ""}" data-gallery-index="${i}">
+                    ${isMov ? `<video src="${m}" muted loop playsinline></video>` : `<img src="${m}" alt="">`}
+                  </div>`;
+                  })
+                  .join("")}
+              </div>`
+                : ""
+            }
+          </div>
+          <div class="product-modal-info">
+            <div class="creator-product-header">
+              <h3>${esc(p.name)}</h3>
+              <span class="creator-product-status creator-product-status--sold">Venduto</span>
+            </div>
+            <div class="product-modal-price">\u20ac${p.price}</div>
+            <p class="product-modal-desc">${esc(p.description)}</p>
+            <div class="product-modal-actions">
+              <span class="product-sold-out-badge">Non disponibile</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
 function renderInquiryForm(c, p) {
   return `
     <div class="product-modal-overlay" data-inquiry-modal>
@@ -304,7 +357,7 @@ function renderPortfolio(c) {
         ${soldProducts
           .map(
             (p) => `
-          <div class="creator-portfolio-item creator-portfolio-item--sold">
+          <div class="creator-portfolio-item creator-portfolio-item--sold" data-portfolio-sold="${p.id}" data-customizer-id="${c.id}">
             <div class="creator-portfolio-image">
               ${p.image ? `<img src="${p.image}" alt="${esc(p.name)}">` : "&#9632;"}
               <span class="creator-sold-badge">Venduto</span>
@@ -821,6 +874,98 @@ export function initCreator() {
       return;
     }
 
+    /* Portfolio sold item click -> open modal */
+    const portfolioSold = e.target.closest("[data-portfolio-sold]");
+    if (
+      portfolioSold &&
+      !e.target.closest("[data-close-portfolio-modal]") &&
+      !e.target.closest("[data-status-select]") &&
+      !e.target.closest("[data-portfolio-modal]")
+    ) {
+      const pid = portfolioSold.dataset.portfolioSold;
+      const cid = portfolioSold.dataset.customizerId;
+      const c = getCustomizer(cid);
+      const p = c && c.products ? c.products.find((x) => x.id === pid) : null;
+      if (c && p) {
+        document.body.insertAdjacentHTML(
+          "beforeend",
+          renderPortfolioModal(p, c),
+        );
+      }
+    }
+
+    /* Close portfolio modal */
+    if (e.target.closest("[data-close-portfolio-modal]")) {
+      const modal = document.querySelector("[data-portfolio-modal]");
+      if (modal) modal.remove();
+      return;
+    }
+    if (
+      e.target.closest("[data-portfolio-modal]") &&
+      !e.target.closest(".product-modal")
+    ) {
+      const modal = document.querySelector("[data-portfolio-modal]");
+      if (modal) modal.remove();
+      return;
+    }
+
+    /* Portfolio gallery navigation */
+    if (
+      e.target.closest("[data-portfolio-gallery-next]") ||
+      e.target.closest("[data-portfolio-gallery-prev]")
+    ) {
+      const modal = document.querySelector("[data-portfolio-modal]");
+      if (!modal) return;
+      const gallery = modal.querySelector(".product-modal-gallery");
+      const mainImg = modal.querySelector(".product-modal-main-image");
+      if (!gallery) return;
+      const thumbs = gallery.querySelectorAll(".product-modal-thumb");
+      if (!thumbs.length) return;
+      const active = gallery.querySelector(".product-modal-thumb.active");
+      let idx = active ? parseInt(active.dataset.galleryIndex) : 0;
+      const items = JSON.parse(gallery.dataset.galleryItems);
+      if (e.target.closest("[data-portfolio-gallery-next]"))
+        idx = (idx + 1) % items.length;
+      else idx = (idx - 1 + items.length) % items.length;
+      thumbs.forEach((t) => t.classList.remove("active"));
+      thumbs[idx].classList.add("active");
+      thumbs[idx].scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+      const src = items[idx];
+      const isMov = src && src.endsWith(".mov");
+      mainImg.innerHTML = isMov
+        ? `<video src="${src}" controls playsinline></video>`
+        : `<img src="${src}" alt="">`;
+      mainImg.dataset.mediaIndex = idx;
+    }
+
+    /* Portfolio gallery thumb click */
+    const pThumb = e.target.closest(
+      "[data-portfolio-modal] .product-modal-thumb",
+    );
+    if (pThumb) {
+      const modal = document.querySelector("[data-portfolio-modal]");
+      if (!modal) return;
+      const gallery = modal.querySelector(".product-modal-gallery");
+      const mainImg = modal.querySelector(".product-modal-main-image");
+      if (!gallery || !mainImg) return;
+      const items = JSON.parse(gallery.dataset.galleryItems);
+      const idx = parseInt(pThumb.dataset.galleryIndex);
+      gallery
+        .querySelectorAll(".product-modal-thumb")
+        .forEach((t) => t.classList.remove("active"));
+      pThumb.classList.add("active");
+      const src = items[idx];
+      const isMov = src && src.endsWith(".mov");
+      mainImg.innerHTML = isMov
+        ? `<video src="${src}" controls playsinline></video>`
+        : `<img src="${src}" alt="">`;
+      mainImg.dataset.mediaIndex = idx;
+    }
+
     /* Gallery navigation */
     if (
       e.target.closest("[data-gallery-next]") ||
@@ -853,16 +998,16 @@ export function initCreator() {
     }
 
     /* Gallery thumb click */
-    const thumb = e.target.closest("[data-gallery-index]");
-    if (thumb) {
-      const gallery = thumb.closest(".product-modal-gallery");
+    const gThumb = e.target.closest("[data-gallery-index]");
+    if (gThumb) {
+      const gallery = gThumb.closest(".product-modal-gallery");
       const mainImg = document.querySelector(".product-modal-main-image");
       const items = JSON.parse(gallery.dataset.galleryItems);
-      const idx = parseInt(thumb.dataset.galleryIndex);
+      const idx = parseInt(gThumb.dataset.galleryIndex);
       gallery
         .querySelectorAll(".product-modal-thumb")
         .forEach((t) => t.classList.remove("active"));
-      thumb.classList.add("active");
+      gThumb.classList.add("active");
       const src = items[idx];
       if (src && src.endsWith(".mov")) {
         mainImg.innerHTML = `<video src="${src}" autoplay muted loop playsinline></video>`;

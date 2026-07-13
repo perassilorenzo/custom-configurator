@@ -82,17 +82,6 @@ export const customizer = {
       techniques: ["Alteration", "Denim", "Raw Hem"],
     },
     {
-      title: "Camo Panel Reconstruction",
-      description:
-        "Rielaborazione di pantaloni con dettagli in tessuto camouflage applicati su tasche e strappi, e aggiunta di inserti triangolari sul fondo per una forma piu ampia e definita.",
-      images: [
-        "customizers/lorenzo-perassi/images/fashion-camo-panel.png",
-        "customizers/lorenzo-perassi/images/fashion-camo-panel-1.mov",
-        "customizers/lorenzo-perassi/images/fashion-camo-panel-2.mov",
-      ],
-      techniques: ["Rework", "Camo", "Reconstruction"],
-    },
-    {
       title: "Cropped Tee Alteration",
       description:
         "T-shirt accorciata con taglio netto e rifinitura cucita sul fondo per ottenere una vestibilita cropped pulita e strutturata.",
