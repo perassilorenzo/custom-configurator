@@ -1,16 +1,16 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="">
-    <img src="" alt="Custom Configurator" width="80">
+    <img src="" alt="Customly" width="80">
   </picture>
 </p>
 
-<h1 align="center">Custom Configurator</h1>
+<h1 align="center">Customly</h1>
 
 <p align="center">
   <strong>Design your custom clothing in real time</strong>
   <br>
-  A visual SPA where customers configure garments and sellers receive ready-to-fulfill orders.
+  A visual SPA where customers configure garments and customizers receive ready-to-fulfill orders.
   <br>
   <i>No more chaotic DMs — just a clear, structured pipeline from idea to order.</i>
 </p>
@@ -20,16 +20,17 @@
   <a href="#tech-stack">Tech Stack</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#architecture">Architecture</a> •
-  <a href="#seller-system">Seller System</a>
+  <a href="#customizer-system">Customizer System</a> •
+  <a href="#roadmap">Roadmap</a>
 </p>
 
 ---
 
 ## The Problem
 
-Ordering a customized garment today means endless Instagram DMs, WhatsApp voice notes, and misunderstood requests. Clients can't explain what they want clearly. Sellers waste hours interpreting fragmented messages.
+Ordering a customized garment today means endless Instagram DMs, WhatsApp voice notes, and misunderstood requests. Clients can't explain what they want clearly. Customizers waste hours interpreting fragmented messages.
 
-**Custom Configurator bridges that gap.**
+**Customly bridges that gap.**
 
 ---
 
@@ -37,18 +38,18 @@ Ordering a customized garment today means endless Instagram DMs, WhatsApp voice 
 
 ### For Customers
 
-- **Two modes**: configure a garment you already own, or order from a registered seller
+- **Two modes**: configure a garment you already own, or order from a registered customizer
 - **3 garment types**: T-shirts, jeans, hoodies — each with tailored modification options
 - **Real-time SVG preview**: see every change reflected instantly on an interactive garment preview
 - **Modifications**: sleeve length, fit (oversize/slim), cropped, raw hem, patches, tears, bleach, prints, embroidery, color, and more
 - **Live price calculator**: base price + option surcharges update as you customize
 - **One-click order**: submit a complete, structured request via email with all details attached
 
-### For Sellers
+### For Customizers
 
-- **Modular seller profiles**: each seller has their own products, prices, and available modifications
+- **Modular profiles**: each customizer has their own products, prices, and available modifications
 - **Structured orders**: every submission arrives with full configuration details, no back-and-forth needed
-- **Searchable directory**: customers find sellers by name or style
+- **Searchable directory**: customers find customizers by name or style
 
 ### Customization Options per Garment
 
@@ -99,54 +100,52 @@ Open `http://localhost:8000` in your browser.
 ```
 index.html              ← SPA entry point (minimal shell)
 ├── components/         ← Reusable UI (navbar, footer)
-├── pages/              ← Route-level pages (home, configuratore, venditori, contatti)
+├── pages/              ← Route-level pages (home, configuratore, creator, contatti)
 ├── data/               ← Business logic & data models
-│   ├── garment-types.js   ← Garment definitions + modifications
+│   ├── customizers.js     ← Customizer registry & search
 │   ├── products.js        ← SVG rendering engine
-│   ├── sellers.js         ← Seller registry & search
 │   └── color.js           ← Color utilities
-├── sellers/            ← Modular seller directories
-│   ├── demon-handmade/    ← Seller: Demon Handmade
-│   └── raw-spirit/        ← Seller: Raw Spirit
+├── customizers/        ← Modular customizer profiles
+│   ├── lorenzo-perassi/   ← Customizer: Lorenzo Perassi
+│   └── template/          ← Template for new customizers
 ├── styles/             ← Stylesheets
 └── utils/              ← Core utilities
     ├── router.js           ← Hash-based SPA router
-    ├── store.js            ← Simple state store
-    └── formspree.js        ← Formspree API client
+    ├── formspree.js        ← Formspree API client
+    └── product-status.js   ← Product status persistence
 ```
 
 The app follows a **render → init** pattern: each page exports `renderX()` (returns HTML string) and `initX()` (binds event listeners). The router calls these in sequence, wrapped by a shared navbar + footer.
 
 ---
 
-## Seller System
+## Customizer System
 
-Sellers are self-contained directories under `sellers/`:
+Customizers are self-contained directories under `customizers/`:
 
 ```
-sellers/demon-handmade/
-├── data.js            ← Name, bio, style, products, prices, options
-├── configuratore/     ← Reserved (seller-specific config overrides)
-└── immagini/          ← Reserved (seller imagery)
+customizers/lorenzo-perassi/
+├── data.js            ← Name, bio, styles, products, portfolio, services
+└── images/            ← Profile and portfolio images
 ```
 
-Adding a new seller means creating a directory with a `data.js` file following the schema. No backend changes needed.
+Adding a new customizer means creating a directory with a `data.js` file following the schema, then registering it in `data/customizers.js`. No backend changes needed.
 
-### Current Sellers
+### Current Customizers
 
-| Seller             | Style                     | Products          |
-| ------------------ | ------------------------- | ----------------- |
-| **Demon Handmade** | Streetwear / experimental | T-shirts, hoodies |
-| **Raw Spirit**     | Minimal / raw aesthetics  | Jeans, T-shirts   |
+| Customizer          | Style                      | Specialization  |
+| ------------------- | -------------------------- | --------------- |
+| **Lorenzo Perassi** | Custom fashion / upcycling | Denim, T-shirts |
+| **Template**        | Example profile            | All garments    |
 
 ---
 
 ## Roadmap
 
 - [x] MVP — configurator with real-time preview
-- [x] Seller system with modular profiles
-- [ ] Seller dashboard — manage orders in one place
-- [ ] Public seller pages — shareable links for social media
+- [x] Customizer system with modular profiles
+- [ ] Customizer dashboard — manage orders in one place
+- [ ] Public customizer pages — shareable links for social media
 - [ ] Community features — follow creators, share configurations
 - [ ] Marketplace — discover new customization artists
 
@@ -154,7 +153,7 @@ Adding a new seller means creating a directory with a `data.js` file following t
 
 ## Vision
 
-Custom Configurator is the first step toward a full **ecosystem for clothing customization**. I want every independent creator, tailor, and brand to have their own configurator — a direct, visual line between their vision and their customers.
+Customly is the first step toward a full **ecosystem for clothing customization**. I want every independent creator, tailor, and brand to have their own configurator — a direct, visual line between their vision and their customers.
 
 ---
 

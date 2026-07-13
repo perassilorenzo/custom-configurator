@@ -76,7 +76,6 @@ function renderShirt(c) {
   if (c.print) svg += printEl(bx, by, bw, c);
   if (c.patch) svg += patchEl(bx + 18, by + 80, c);
   if (c.ricamo) svg += ricamoEl(bx, by, bw, c);
-  addStitchOverlay(svg, bx, by, bw, bH);
   svg += `</svg>`;
   return svg;
 }
@@ -280,5 +279,3 @@ function waistDetails(wx, wy, ww, c) {
   <line x1="${wx + 4}" y1="${wy + 12}" x2="${wx + 10}" y2="${wy + 12}" stroke="${d}" stroke-width="1.2"/>
   <line x1="${wx + ww - 10}" y1="${wy + 12}" x2="${wx + ww - 4}" y2="${wy + 12}" stroke="${d}" stroke-width="1.2"/>`;
 }
-
-function addStitchOverlay(svg, bx, by, bw, bH) {}

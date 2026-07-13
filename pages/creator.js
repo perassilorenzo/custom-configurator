@@ -920,7 +920,7 @@ export function initCreator() {
       obj.type = "inquiry";
       obj.customizerId = form.dataset.customizerId;
       obj.productId = form.dataset.productId;
-      console.log("Inquiry submitted:", obj);
+
       form.closest("[data-inquiry-modal]")?.remove();
       document.body.insertAdjacentHTML(
         "beforeend",
@@ -943,7 +943,7 @@ export function initCreator() {
       obj.type = "purchase";
       obj.customizerId = form.dataset.customizerId;
       obj.productId = form.dataset.productId;
-      console.log("Purchase submitted:", obj);
+
       /* Mark product as in trattativa */
       const c = getCustomizer(obj.customizerId);
       if (c && c.products) {

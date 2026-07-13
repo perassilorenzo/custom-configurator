@@ -1,7 +1,6 @@
 import { renderSVG, getColorLabel } from "../data/products.js";
 import { send } from "../utils/formspree.js";
 import { getParams, navigate } from "../utils/router.js";
-import { getSeller } from "../data/sellers.js";
 import { getCustomizer } from "../data/customizers.js";
 
 const COLORS = [
@@ -263,9 +262,7 @@ function render() {
   if (!root) return;
 
   if (!root.querySelector(".cfg-layout")) {
-    const ci = s.creator
-      ? getSeller(s.creator) || getCustomizer(s.creator)
-      : null;
+    const ci = s.creator ? getCustomizer(s.creator) : null;
     root.innerHTML = `
     <div class="cfg-layout">
       <div class="cfg-main">
@@ -343,9 +340,7 @@ function renderStepStart() {
 }
 
 function renderStepNoGarment() {
-  const ci = s.creator
-    ? getSeller(s.creator) || getCustomizer(s.creator)
-    : null;
+  const ci = s.creator ? getCustomizer(s.creator) : null;
   const items = (ci?.availableForCustomization || []).filter(
     (a) => a.garmentType,
   );
@@ -558,9 +553,7 @@ function renderCustomizationItem(c, i) {
 }
 
 function renderStepReview() {
-  const ci = s.creator
-    ? getSeller(s.creator) || getCustomizer(s.creator)
-    : null;
+  const ci = s.creator ? getCustomizer(s.creator) : null;
   const gi = s.garmentType ? GARMENT[s.garmentType] : null;
   const ml =
     s.garmentType && s.model
@@ -676,9 +669,7 @@ function renderStepReview() {
 
 function renderSummary() {
   if (s.submittedOk) return "";
-  const ci = s.creator
-    ? getSeller(s.creator) || getCustomizer(s.creator)
-    : null;
+  const ci = s.creator ? getCustomizer(s.creator) : null;
   const gi = s.garmentType ? GARMENT[s.garmentType] : null;
   const ml =
     s.garmentType && s.model
@@ -1365,7 +1356,7 @@ export function initConfiguratore() {
   const creatorId = params.creator;
   if (!creatorId) return renderChooseCreator();
 
-  const seller = getSeller(creatorId) || getCustomizer(creatorId);
+  const seller = getCustomizer(creatorId);
   if (!seller) return renderChooseCreator();
 
   s.creator = creatorId;
