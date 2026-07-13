@@ -51,6 +51,12 @@ Ordering a customized garment today means endless Instagram DMs, WhatsApp voice 
 - **Structured orders**: every submission arrives with full configuration details, no back-and-forth needed
 - **Searchable directory**: customers find customizers by name or style
 
+### Portfolio & Galleries
+
+- **Image gallery popup**: click any portfolio card to browse all project images and videos in a fullscreen gallery with navigation arrows and thumbnails
+- **Fullscreen image viewer**: click any product image inside the product modal to view it fullscreen in its original format
+- **Dark/light mode toggle**: sewing-inspired theme switcher with stitch detail, respects system preference
+
 ### Customization Options per Garment
 
 | T-Shirt / Maglia                        | Jeans                                           | Hoodie / Felpa                 |
@@ -144,6 +150,8 @@ Adding a new customizer means creating a directory with a `data.js` file followi
 
 - [x] MVP — configurator with real-time preview
 - [x] Customizer system with modular profiles
+- [x] Portfolio galleries — image/video popup and fullscreen viewer
+- [x] Dark/light mode toggle
 - [ ] Customizer dashboard — manage orders in one place
 - [ ] Public customizer pages — shareable links for social media
 - [ ] Community features — follow creators, share configurations

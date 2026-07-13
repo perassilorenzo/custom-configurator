@@ -26,6 +26,10 @@ function avatarImg(c, size, cls) {
   return `<div class="${cls}-placeholder">${c.name.charAt(0)}</div>`;
 }
 
+function isMov(src) {
+  return src && /\.mov$/i.test(src);
+}
+
 /* ---- Profile renderers ---- */
 
 function renderHero(c) {
@@ -172,7 +176,7 @@ function renderProductModal(p, c) {
         <button class="product-modal-close" data-close-product-modal>&times;</button>
         <div class="product-modal-grid">
           <div class="product-modal-images">
-            <div class="product-modal-main-image" data-media-index="0">
+            <div class="product-modal-main-image" data-media-index="0" data-fullscreen-trigger>
               ${mainMedia}
             </div>
             ${
@@ -183,9 +187,8 @@ function renderProductModal(p, c) {
               <div class="product-modal-gallery" data-gallery-items='${JSON.stringify(allMedia)}'>
                 ${allMedia
                   .map((m, i) => {
-                    const isMov = m && m.endsWith(".mov");
                     return `<div class="product-modal-thumb${i === 0 ? " active" : ""}" data-gallery-index="${i}">
-                    ${isMov ? `<video src="${m}" muted loop playsinline></video>` : `<img src="${m}" alt="">`}
+                    ${isMov(m) ? `<video src="${m}" muted loop playsinline></video>` : `<img src="${m}" alt="">`}
                   </div>`;
                   })
                   .join("")}
@@ -230,7 +233,7 @@ function renderPortfolioModal(p, c) {
     ? [p.image, ...(p.gallery || [])]
     : [...(p.gallery || [])];
   const mainMedia = allMedia.length
-    ? allMedia[0].endsWith(".mov")
+    ? isMov(allMedia[0])
       ? `<video src="${allMedia[0]}" controls playsinline></video>`
       : `<img src="${allMedia[0]}" alt="${esc(p.name)}">`
     : `<div class="product-modal-placeholder">&#9632;</div>`;
@@ -252,9 +255,8 @@ function renderPortfolioModal(p, c) {
               <div class="product-modal-gallery" data-gallery-items='${JSON.stringify(allMedia)}'>
                 ${allMedia
                   .map((m, i) => {
-                    const isMov = m && m.endsWith(".mov");
                     return `<div class="product-modal-thumb${i === 0 ? " active" : ""}" data-gallery-index="${i}">
-                    ${isMov ? `<video src="${m}" muted loop playsinline></video>` : `<img src="${m}" alt="">`}
+                    ${isMov(m) ? `<video src="${m}" muted loop playsinline></video>` : `<img src="${m}" alt="">`}
                   </div>`;
                   })
                   .join("")}
@@ -275,6 +277,52 @@ function renderPortfolioModal(p, c) {
           </div>
         </div>
       </div>
+    </div>`;
+}
+
+function renderImageGalleryModal(media) {
+  if (!media || !media.length) return "";
+  const first = media[0];
+  const mainContent = isMov(first)
+    ? `<video src="${first}" controls playsinline></video>`
+    : `<img src="${first}" alt="">`;
+  const hasGallery = media.length > 1;
+  return `
+    <div class="image-gallery-overlay" data-image-gallery-modal>
+      <button class="image-gallery-close" data-close-image-gallery>&times;</button>
+      <div class="image-gallery-content">
+        <div class="image-gallery-main" data-media-index="0">
+          ${mainContent}
+        </div>
+        ${
+          hasGallery
+            ? `
+          <button class="image-gallery-arrow image-gallery-arrow--left" data-image-gallery-prev>&lsaquo;</button>
+          <button class="image-gallery-arrow image-gallery-arrow--right" data-image-gallery-next>&rsaquo;</button>
+          <div class="image-gallery-thumbs" data-gallery-items='${JSON.stringify(media)}'>
+            ${media
+              .map(
+                (m, i) => `
+              <div class="image-gallery-thumb${i === 0 ? " active" : ""}" data-gallery-index="${i}">
+                ${isMov(m) ? `<video src="${m}" muted loop playsinline></video>` : `<img src="${m}" alt="">`}
+              </div>`,
+              )
+              .join("")}
+          </div>`
+            : ""
+        }
+      </div>
+    </div>`;
+}
+
+function renderFullscreenOverlay(src) {
+  if (!src) return "";
+  const content = isMov(src)
+    ? `<video src="${src}" controls playsinline></video>`
+    : `<img src="${src}" alt="">`;
+  return `
+    <div class="fullscreen-overlay" data-fullscreen-overlay>
+      ${content}
     </div>`;
 }
 
@@ -334,8 +382,8 @@ function renderPortfolio(c) {
       <div class="creator-portfolio">
         ${portfolioItems
           .map(
-            (p) => `
-          <div class="creator-portfolio-item">
+            (p, i) => `
+          <div class="creator-portfolio-item" data-portfolio-gallery="${i}">
             <div class="creator-portfolio-image">
               ${p.images && p.images.length ? `<img src="${p.images[0]}" alt="${esc(p.title)}">` : "&#9632;"}
             </div>
@@ -758,6 +806,7 @@ let _listState = {
   filters: { styles: [], garments: [], techniques: [], locations: [] },
 };
 let _filterOpts = null;
+let bound = false;
 
 function applyListFilter() {
   const all = getAllCustomizers();
@@ -818,6 +867,9 @@ export function renderCreator(ctx) {
 }
 
 export function initCreator() {
+  if (bound) return;
+  bound = true;
+
   /* Profile page: CTA buttons (delegated to support multiple buttons) */
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-start-creator]");
@@ -874,57 +926,85 @@ export function initCreator() {
       return;
     }
 
-    /* Portfolio sold item click -> open modal */
+    /* Regular portfolio item click -> open image gallery */
+    const portfolioItem = e.target.closest("[data-portfolio-gallery]");
+    if (
+      portfolioItem &&
+      !e.target.closest("[data-close-image-gallery]") &&
+      !e.target.closest("[data-status-select]")
+    ) {
+      const idx = parseInt(portfolioItem.dataset.portfolioGallery);
+      const cid = portfolioItem.closest(".creator-main-col")
+        ? document.querySelector("[data-start-creator]")?.dataset.startCreator
+        : null;
+      const c = cid ? getCustomizer(cid) : null;
+      const item = c && c.portfolio ? c.portfolio[idx] : null;
+      const media =
+        item && item.images && item.images.length ? item.images : [];
+      if (media.length) {
+        document.body.insertAdjacentHTML(
+          "beforeend",
+          renderImageGalleryModal(media),
+        );
+      }
+    }
+
+    /* Portfolio sold item click -> open image gallery */
     const portfolioSold = e.target.closest("[data-portfolio-sold]");
     if (
       portfolioSold &&
-      !e.target.closest("[data-close-portfolio-modal]") &&
+      !e.target.closest("[data-close-image-gallery]") &&
       !e.target.closest("[data-status-select]") &&
-      !e.target.closest("[data-portfolio-modal]")
+      !e.target.closest("[data-image-gallery-modal]")
     ) {
       const pid = portfolioSold.dataset.portfolioSold;
       const cid = portfolioSold.dataset.customizerId;
       const c = getCustomizer(cid);
       const p = c && c.products ? c.products.find((x) => x.id === pid) : null;
       if (c && p) {
-        document.body.insertAdjacentHTML(
-          "beforeend",
-          renderPortfolioModal(p, c),
-        );
+        const media = p.image
+          ? [p.image, ...(p.gallery || [])]
+          : [...(p.gallery || [])];
+        if (media.length) {
+          document.body.insertAdjacentHTML(
+            "beforeend",
+            renderImageGalleryModal(media),
+          );
+        }
       }
     }
 
-    /* Close portfolio modal */
-    if (e.target.closest("[data-close-portfolio-modal]")) {
-      const modal = document.querySelector("[data-portfolio-modal]");
+    /* Close image gallery */
+    if (e.target.closest("[data-close-image-gallery]")) {
+      const modal = document.querySelector("[data-image-gallery-modal]");
       if (modal) modal.remove();
       return;
     }
     if (
-      e.target.closest("[data-portfolio-modal]") &&
-      !e.target.closest(".product-modal")
+      e.target.closest("[data-image-gallery-modal]") &&
+      !e.target.closest(".image-gallery-content")
     ) {
-      const modal = document.querySelector("[data-portfolio-modal]");
+      const modal = document.querySelector("[data-image-gallery-modal]");
       if (modal) modal.remove();
       return;
     }
 
-    /* Portfolio gallery navigation */
+    /* Image gallery navigation */
     if (
-      e.target.closest("[data-portfolio-gallery-next]") ||
-      e.target.closest("[data-portfolio-gallery-prev]")
+      e.target.closest("[data-image-gallery-next]") ||
+      e.target.closest("[data-image-gallery-prev]")
     ) {
-      const modal = document.querySelector("[data-portfolio-modal]");
+      const modal = document.querySelector("[data-image-gallery-modal]");
       if (!modal) return;
-      const gallery = modal.querySelector(".product-modal-gallery");
-      const mainImg = modal.querySelector(".product-modal-main-image");
-      if (!gallery) return;
-      const thumbs = gallery.querySelectorAll(".product-modal-thumb");
+      const gallery = modal.querySelector(".image-gallery-thumbs");
+      const mainEl = modal.querySelector(".image-gallery-main");
+      if (!gallery || !mainEl) return;
+      const thumbs = gallery.querySelectorAll(".image-gallery-thumb");
       if (!thumbs.length) return;
-      const active = gallery.querySelector(".product-modal-thumb.active");
+      const active = gallery.querySelector(".image-gallery-thumb.active");
       let idx = active ? parseInt(active.dataset.galleryIndex) : 0;
       const items = JSON.parse(gallery.dataset.galleryItems);
-      if (e.target.closest("[data-portfolio-gallery-next]"))
+      if (e.target.closest("[data-image-gallery-next]"))
         idx = (idx + 1) % items.length;
       else idx = (idx - 1 + items.length) % items.length;
       thumbs.forEach((t) => t.classList.remove("active"));
@@ -935,44 +1015,68 @@ export function initCreator() {
         inline: "center",
       });
       const src = items[idx];
-      const isMov = src && src.endsWith(".mov");
-      mainImg.innerHTML = isMov
+      mainEl.innerHTML = isMov(src)
         ? `<video src="${src}" controls playsinline></video>`
         : `<img src="${src}" alt="">`;
-      mainImg.dataset.mediaIndex = idx;
+      mainEl.dataset.mediaIndex = idx;
     }
 
-    /* Portfolio gallery thumb click */
-    const pThumb = e.target.closest(
-      "[data-portfolio-modal] .product-modal-thumb",
+    /* Image gallery thumb click */
+    const iThumb = e.target.closest(
+      "[data-image-gallery-modal] .image-gallery-thumb",
     );
-    if (pThumb) {
-      const modal = document.querySelector("[data-portfolio-modal]");
+    if (iThumb) {
+      const modal = document.querySelector("[data-image-gallery-modal]");
       if (!modal) return;
-      const gallery = modal.querySelector(".product-modal-gallery");
-      const mainImg = modal.querySelector(".product-modal-main-image");
-      if (!gallery || !mainImg) return;
+      const gallery = modal.querySelector(".image-gallery-thumbs");
+      const mainEl = modal.querySelector(".image-gallery-main");
+      if (!gallery || !mainEl) return;
       const items = JSON.parse(gallery.dataset.galleryItems);
-      const idx = parseInt(pThumb.dataset.galleryIndex);
+      const idx = parseInt(iThumb.dataset.galleryIndex);
       gallery
-        .querySelectorAll(".product-modal-thumb")
+        .querySelectorAll(".image-gallery-thumb")
         .forEach((t) => t.classList.remove("active"));
-      pThumb.classList.add("active");
+      iThumb.classList.add("active");
       const src = items[idx];
-      const isMov = src && src.endsWith(".mov");
-      mainImg.innerHTML = isMov
+      mainEl.innerHTML = isMov(src)
         ? `<video src="${src}" controls playsinline></video>`
         : `<img src="${src}" alt="">`;
-      mainImg.dataset.mediaIndex = idx;
+      mainEl.dataset.mediaIndex = idx;
     }
 
-    /* Gallery navigation */
+    /* Product modal main image click -> fullscreen */
+    if (
+      e.target.closest("[data-fullscreen-trigger]") &&
+      !e.target.closest("[data-image-gallery-modal]")
+    ) {
+      const mainImg = e.target.closest("[data-fullscreen-trigger]");
+      const img = mainImg.querySelector("img");
+      const vid = mainImg.querySelector("video");
+      const src = img ? img.src : vid ? vid.src : null;
+      if (src) {
+        document.body.insertAdjacentHTML(
+          "beforeend",
+          renderFullscreenOverlay(src),
+        );
+      }
+    }
+
+    /* Close fullscreen overlay */
+    if (e.target.closest("[data-fullscreen-overlay]")) {
+      const overlay = document.querySelector("[data-fullscreen-overlay]");
+      if (overlay) overlay.remove();
+      return;
+    }
+
+    /* Product modal gallery navigation */
     if (
       e.target.closest("[data-gallery-next]") ||
       e.target.closest("[data-gallery-prev]")
     ) {
-      const gallery = document.querySelector(".product-modal-gallery");
-      const mainImg = document.querySelector(".product-modal-main-image");
+      const modal = document.querySelector("[data-product-modal]");
+      if (!modal) return;
+      const gallery = modal.querySelector(".product-modal-gallery");
+      const mainImg = modal.querySelector(".product-modal-main-image");
       if (!gallery) return;
       const thumbs = gallery.querySelectorAll(".product-modal-thumb");
       if (!thumbs.length) return;
@@ -990,18 +1094,22 @@ export function initCreator() {
         inline: "center",
       });
       const src = items[idx];
-      if (src && src.endsWith(".mov")) {
-        mainImg.innerHTML = `<video src="${src}" autoplay muted loop playsinline></video>`;
-      } else {
-        mainImg.innerHTML = `<img src="${src}" alt="">`;
-      }
+      mainImg.innerHTML = isMov(src)
+        ? `<video src="${src}" autoplay muted loop playsinline></video>`
+        : `<img src="${src}" alt="">`;
+      mainImg.dataset.mediaIndex = idx;
     }
 
-    /* Gallery thumb click */
-    const gThumb = e.target.closest("[data-gallery-index]");
+    /* Product modal gallery thumb click */
+    const gThumb = e.target.closest(
+      "[data-product-modal] .product-modal-thumb",
+    );
     if (gThumb) {
-      const gallery = gThumb.closest(".product-modal-gallery");
-      const mainImg = document.querySelector(".product-modal-main-image");
+      const modal = document.querySelector("[data-product-modal]");
+      if (!modal) return;
+      const gallery = modal.querySelector(".product-modal-gallery");
+      const mainImg = modal.querySelector(".product-modal-main-image");
+      if (!gallery || !mainImg) return;
       const items = JSON.parse(gallery.dataset.galleryItems);
       const idx = parseInt(gThumb.dataset.galleryIndex);
       gallery
@@ -1009,11 +1117,10 @@ export function initCreator() {
         .forEach((t) => t.classList.remove("active"));
       gThumb.classList.add("active");
       const src = items[idx];
-      if (src && src.endsWith(".mov")) {
-        mainImg.innerHTML = `<video src="${src}" autoplay muted loop playsinline></video>`;
-      } else {
-        mainImg.innerHTML = `<img src="${src}" alt="">`;
-      }
+      mainImg.innerHTML = isMov(src)
+        ? `<video src="${src}" autoplay muted loop playsinline></video>`
+        : `<img src="${src}" alt="">`;
+      mainImg.dataset.mediaIndex = idx;
     }
 
     /* Open inquiry form */

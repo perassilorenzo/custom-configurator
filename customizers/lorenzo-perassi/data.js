@@ -51,10 +51,15 @@ export const customizer = {
     {
       id: "lp-prod-1",
       name: "Camo Rework",
-      image: "customizers/lorenzo-perassi/images/camo-rework.jpg",
+      image: "customizers/lorenzo-perassi/images/camo-rework-anteprima.jpg",
       gallery: [
-        "customizers/lorenzo-perassi/images/camo-rework-1.mov",
-        "customizers/lorenzo-perassi/images/camo-rework-2.mov",
+        "customizers/lorenzo-perassi/images/camo-rework-1.MOV",
+        "customizers/lorenzo-perassi/images/camo-rework-2.MOV",
+        "customizers/lorenzo-perassi/images/camo-rework-3.MOV",
+        "customizers/lorenzo-perassi/images/camo-rework-4.MOV",
+        "customizers/lorenzo-perassi/images/camo-rework-5.MOV",
+        "customizers/lorenzo-perassi/images/camo-rework-6.MOV",
+        "customizers/lorenzo-perassi/images/camo-rework-7.MOV",
       ],
       description:
         "Pantaloni baggy marroni rovinati, rielaborati con inserti in tessuto camouflage. Tasche laterali in camo senza chiusura e allargamento del fondo per una forma pi\u00f9 ampia e definita.",
@@ -135,7 +140,7 @@ export const customizer = {
       title: "CRYBU Collaboration",
       description:
         "Collaborazione creativa di fashion design e sartoria. Design, prototipazione e creazione delle camicie per gli investitori di CRYBU S.R.L.",
-      images: [],
+      images: ["customizers/lorenzo-perassi/images/crybu-design.png"],
       techniques: ["Fashion Design", "Prototipazione", "Produzione Sartoriale"],
     },
   ],
