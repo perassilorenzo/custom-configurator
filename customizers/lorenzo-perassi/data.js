@@ -69,11 +69,85 @@ export const customizer = {
   ],
   portfolio: [
     {
-      title: "Flared Denim Project",
+      title: "Distressed Raw Hem",
       description:
-        "Trasformazione di un jeans regular in un paio di flare con inserti in tessuto contract. Cuciture a contrasto e vita regolabile.",
+        "Servizio di modifica e personalizzazione denim. Accorciatura con finitura raw hem, cucitura di rinforzo ed effetto sfrangiato ottenuto manualmente per un risultato pulito, durevole e su misura.",
+      images: [
+        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem.jpg",
+        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem-2.mov",
+        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem-4.mov",
+        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem-3.mov",
+        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem-1.mov",
+      ],
+      techniques: ["Alteration", "Denim", "Raw Hem"],
+    },
+    {
+      title: "Camo Panel Reconstruction",
+      description:
+        "Rielaborazione di pantaloni con dettagli in tessuto camouflage applicati su tasche e strappi, e aggiunta di inserti triangolari sul fondo per una forma piu ampia e definita.",
+      images: [
+        "customizers/lorenzo-perassi/images/fashion-camo-panel.png",
+        "customizers/lorenzo-perassi/images/fashion-camo-panel-1.mov",
+        "customizers/lorenzo-perassi/images/fashion-camo-panel-2.mov",
+      ],
+      techniques: ["Rework", "Camo", "Reconstruction"],
+    },
+    {
+      title: "Cropped Tee Alteration",
+      description:
+        "T-shirt accorciata con taglio netto e rifinitura cucita sul fondo per ottenere una vestibilita cropped pulita e strutturata.",
+      images: [
+        "customizers/lorenzo-perassi/images/fashion-cropped-tee.jpg",
+        "customizers/lorenzo-perassi/images/fashion-cropped-tee.mov",
+      ],
+      techniques: ["Alteration", "T-Shirt", "Cropped Hem"],
+    },
+    {
+      title: "Raw Edge Jorts",
+      description:
+        "Jorts rielaborati tramite rimozione dell'orlo originale senza aggiunta di cuciture di rinforzo, lasciando il bordo grezzo per ottenere un effetto sfrangiato naturale con fili bianchi a vista.",
+      images: [
+        "customizers/lorenzo-perassi/images/fashion-raw-edge-jorts.jpg",
+        "customizers/lorenzo-perassi/images/fashion-raw-edge-jorts.mov",
+      ],
+      techniques: ["Alteration", "Jorts", "Raw Hem"],
+    },
+    {
+      title: "Flared Denim Reconstruction",
+      description:
+        "Jeans rielaborati tramite inserimento di pannelli triangolari in tessuto grigio proveniente da una tuta, applicati sul fondo per allargare la silhouette e creare un effetto flared strutturato e contrastato.",
+      images: [
+        "customizers/lorenzo-perassi/images/fashion-flared-reconstruction.jpg",
+        "customizers/lorenzo-perassi/images/fashion-flared-reconstruction.mov",
+      ],
+      techniques: ["Custom", "Jeans", "Flared Hem"],
+    },
+    {
+      title: "Skinny Jeans Reconstruction",
+      description:
+        "Jeans skinny trasformati con inserti in denim chiaro sul fondo e patch in tessuto blu e rosso sulle ginocchia per un effetto ricostruito e contrastato.",
+      images: [
+        "customizers/lorenzo-perassi/images/fashion-skinny-reconstruction.jpg",
+        "customizers/lorenzo-perassi/images/fashion-skinny-reconstruction.mov",
+      ],
+      techniques: ["Rework", "Jeans", "Multi Fabric"],
+    },
+    {
+      title: "Skinny to Flared Transformation",
+      description:
+        "Jeans skinny convertiti in flared tramite inserimento di denim da un altro paio, ricostruendo completamente la silhouette.",
+      images: [
+        "customizers/lorenzo-perassi/images/fashion-skinny-to-flared.jpg",
+        "customizers/lorenzo-perassi/images/fashion-skinny-to-flared.mov",
+      ],
+      techniques: ["Upcycling", "Jeans", "Skinny to Flare"],
+    },
+    {
+      title: "CRYBU Collaboration",
+      description:
+        "Collaborazione creativa di fashion design e sartoria. Design, prototipazione e creazione delle camicie per gli investitori di CRYBU S.R.L.",
       images: [],
-      techniques: ["Denim customization", "Cucito artigianale", "Rework"],
+      techniques: ["Fashion Design", "Prototipazione", "Produzione Sartoriale"],
     },
   ],
   process: [
