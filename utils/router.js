@@ -6,6 +6,10 @@ const dynamicRoutes = [];
 let outlet = null;
 let afterRenderCb = null;
 
+// Detect base path from module URL (e.g. /customly from GitHub Pages subdirectory)
+const BASE_PATH =
+  new URL("..", import.meta.url).pathname.replace(/\/$/, "") || "";
+
 export function route(path, render) {
   if (path.includes(":")) {
     const parts = path.split("/");
@@ -32,12 +36,33 @@ export function afterRender(fn) {
 export function init(el) {
   outlet = el;
 
-  /* Handle GitHub Pages 404 redirect (?p=/path) */
+  /* Handle GitHub Pages 404 redirect (?p=/customly/creator) */
   const params = new URLSearchParams(window.location.search);
   const redirectPath = params.get("p");
   if (redirectPath) {
-    history.replaceState(null, "", redirectPath);
+    const cleanPath = redirectPath.startsWith(BASE_PATH)
+      ? redirectPath.slice(BASE_PATH.length) || "/"
+      : redirectPath;
+    history.replaceState(null, "", BASE_PATH + cleanPath);
   }
+
+  /* Intercept all internal <a> clicks — use navigate() instead of browser */
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[href]");
+    if (!a) return;
+    const href = a.getAttribute("href");
+    if (
+      !href ||
+      href.startsWith("#") ||
+      href.startsWith("http") ||
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:") ||
+      a.target === "_blank"
+    )
+      return;
+    e.preventDefault();
+    navigate(href);
+  });
 
   window.addEventListener("popstate", resolve);
   resolve();
@@ -46,12 +71,16 @@ export function init(el) {
 export function navigate(path) {
   const current = getPath();
   if (current === path) return;
-  history.pushState(null, "", path);
+  history.pushState(null, "", BASE_PATH + path);
   resolve();
 }
 
 export function getPath() {
-  return window.location.pathname.replace(/\/+$/, "") || "/";
+  const raw = window.location.pathname;
+  if (BASE_PATH && raw.startsWith(BASE_PATH)) {
+    return raw.slice(BASE_PATH.length) || "/";
+  }
+  return raw || "/";
 }
 
 export function getParams() {
