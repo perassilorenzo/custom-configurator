@@ -1,10 +1,10 @@
 export const customizer = {
-  id: "lorenzo-perassi",
+  id: "perassilorenzo",
   name: "Lorenzo Perassi",
   tagline: "Sviluppatore di Customly.",
   bio: "Creo capi personalizzati attraverso rework, modifiche sartoriali e sperimentazione streetwear. Lavoro principalmente su denim e abbigliamento casual, trasformando capi esistenti in pezzi unici con un'identit\u00e0 propria.\n\nOgni progetto nasce da un'idea: un dettaglio, una modifica, un riferimento visivo o una semplice ispirazione. Parto dal capo originale e sviluppo una personalizzazione studiata insieme al cliente, curando stile, materiali e risultato finale.\n\nIl mio approccio unisce artigianato, creativit\u00e0 e recupero. Non realizzo produzioni in serie: ogni capo viene modificato per diventare qualcosa di personale e irripetibile.",
-  image: "customizers/lorenzo-perassi/images/pfp.jpg",
-  cover: "customizers/lorenzo-perassi/images/pfp-banner.png",
+  image: "customizers/perassilorenzo/images/pfp.jpg",
+  cover: "customizers/perassilorenzo/images/pfp-banner.png",
   city: "Saluzzo",
   region: "Piemonte",
   country: "Italia",
@@ -51,15 +51,15 @@ export const customizer = {
     {
       id: "lp-prod-1",
       name: "Camo Rework",
-      image: "customizers/lorenzo-perassi/images/camo-rework-anteprima.jpg",
+      image: "customizers/perassilorenzo/images/camo-rework-anteprima.jpg",
       gallery: [
-        "customizers/lorenzo-perassi/images/camo-rework-1.MOV",
-        "customizers/lorenzo-perassi/images/camo-rework-2.MOV",
-        "customizers/lorenzo-perassi/images/camo-rework-3.MOV",
-        "customizers/lorenzo-perassi/images/camo-rework-4.MOV",
-        "customizers/lorenzo-perassi/images/camo-rework-5.MOV",
-        "customizers/lorenzo-perassi/images/camo-rework-6.MOV",
-        "customizers/lorenzo-perassi/images/camo-rework-7.MOV",
+        "customizers/perassilorenzo/images/camo-rework-1.MOV",
+        "customizers/perassilorenzo/images/camo-rework-2.MOV",
+        "customizers/perassilorenzo/images/camo-rework-3.MOV",
+        "customizers/perassilorenzo/images/camo-rework-4.MOV",
+        "customizers/perassilorenzo/images/camo-rework-5.MOV",
+        "customizers/perassilorenzo/images/camo-rework-6.MOV",
+        "customizers/perassilorenzo/images/camo-rework-7.MOV",
       ],
       description:
         "Pantaloni baggy marroni rovinati, rielaborati con inserti in tessuto camouflage. Tasche laterali in camo senza chiusura e allargamento del fondo per una forma pi\u00f9 ampia e definita.",
@@ -78,11 +78,11 @@ export const customizer = {
       description:
         "Servizio di modifica e personalizzazione denim. Accorciatura con finitura raw hem, cucitura di rinforzo ed effetto sfrangiato ottenuto manualmente per un risultato pulito, durevole e su misura.",
       images: [
-        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem.jpg",
-        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem-2.mov",
-        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem-4.mov",
-        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem-3.mov",
-        "customizers/lorenzo-perassi/images/fashion-distressed-raw-hem-1.mov",
+        "customizers/perassilorenzo/images/fashion-distressed-raw-hem.jpg",
+        "customizers/perassilorenzo/images/fashion-distressed-raw-hem-2.mov",
+        "customizers/perassilorenzo/images/fashion-distressed-raw-hem-4.mov",
+        "customizers/perassilorenzo/images/fashion-distressed-raw-hem-3.mov",
+        "customizers/perassilorenzo/images/fashion-distressed-raw-hem-1.mov",
       ],
       techniques: ["Alteration", "Denim", "Raw Hem"],
     },
@@ -91,8 +91,8 @@ export const customizer = {
       description:
         "T-shirt accorciata con taglio netto e rifinitura cucita sul fondo per ottenere una vestibilita cropped pulita e strutturata.",
       images: [
-        "customizers/lorenzo-perassi/images/fashion-cropped-tee.jpg",
-        "customizers/lorenzo-perassi/images/fashion-cropped-tee.mov",
+        "customizers/perassilorenzo/images/fashion-cropped-tee.jpg",
+        "customizers/perassilorenzo/images/fashion-cropped-tee.mov",
       ],
       techniques: ["Alteration", "T-Shirt", "Cropped Hem"],
     },
@@ -101,8 +101,8 @@ export const customizer = {
       description:
         "Jorts rielaborati tramite rimozione dell'orlo originale senza aggiunta di cuciture di rinforzo, lasciando il bordo grezzo per ottenere un effetto sfrangiato naturale con fili bianchi a vista.",
       images: [
-        "customizers/lorenzo-perassi/images/fashion-raw-edge-jorts.jpg",
-        "customizers/lorenzo-perassi/images/fashion-raw-edge-jorts.mov",
+        "customizers/perassilorenzo/images/fashion-raw-edge-jorts.jpg",
+        "customizers/perassilorenzo/images/fashion-raw-edge-jorts.mov",
       ],
       techniques: ["Alteration", "Jorts", "Raw Hem"],
     },
@@ -111,8 +111,8 @@ export const customizer = {
       description:
         "Jeans rielaborati tramite inserimento di pannelli triangolari in tessuto grigio proveniente da una tuta, applicati sul fondo per allargare la silhouette e creare un effetto flared strutturato e contrastato.",
       images: [
-        "customizers/lorenzo-perassi/images/fashion-flared-reconstruction.jpg",
-        "customizers/lorenzo-perassi/images/fashion-flared-reconstruction.mov",
+        "customizers/perassilorenzo/images/fashion-flared-reconstruction.jpg",
+        "customizers/perassilorenzo/images/fashion-flared-reconstruction.mov",
       ],
       techniques: ["Custom", "Jeans", "Flared Hem"],
     },
@@ -121,8 +121,8 @@ export const customizer = {
       description:
         "Jeans skinny trasformati con inserti in denim chiaro sul fondo e patch in tessuto blu e rosso sulle ginocchia per un effetto ricostruito e contrastato.",
       images: [
-        "customizers/lorenzo-perassi/images/fashion-skinny-reconstruction.jpg",
-        "customizers/lorenzo-perassi/images/fashion-skinny-reconstruction.mov",
+        "customizers/perassilorenzo/images/fashion-skinny-reconstruction.jpg",
+        "customizers/perassilorenzo/images/fashion-skinny-reconstruction.mov",
       ],
       techniques: ["Rework", "Jeans", "Multi Fabric"],
     },
@@ -131,8 +131,8 @@ export const customizer = {
       description:
         "Jeans skinny convertiti in flared tramite inserimento di denim da un altro paio, ricostruendo completamente la silhouette.",
       images: [
-        "customizers/lorenzo-perassi/images/fashion-skinny-to-flared.jpg",
-        "customizers/lorenzo-perassi/images/fashion-skinny-to-flared.mov",
+        "customizers/perassilorenzo/images/fashion-skinny-to-flared.jpg",
+        "customizers/perassilorenzo/images/fashion-skinny-to-flared.mov",
       ],
       techniques: ["Upcycling", "Jeans", "Skinny to Flare"],
     },
@@ -140,7 +140,7 @@ export const customizer = {
       title: "@crybu",
       description:
         "Collaborazione creativa di fashion design e sartoria. Design, prototipazione e creazione delle camicie per gli investitori di CRYBU S.R.L.",
-      images: ["customizers/lorenzo-perassi/images/crybu-design.png"],
+      images: ["customizers/perassilorenzo/images/crybu-design.png"],
       techniques: ["Fashion Design", "Prototipazione", "Produzione Sartoriale"],
       link: "https://crybu.it",
     },

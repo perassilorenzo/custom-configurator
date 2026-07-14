@@ -9,7 +9,7 @@ export function renderNav() {
   const links = [
     { href: "/", label: "Home" },
     { href: "/configuratore", label: "Configuratore" },
-    { href: "/creator", label: "Customizers" },
+    { href: "/customizers", label: "Customizers" },
     { href: "/contatti", label: "Contatti" },
   ];
   const path = getPath();

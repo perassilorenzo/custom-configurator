@@ -28,9 +28,9 @@ Ideato e sviluppato da Lorenzo Perassi, studente di Informatica, sviluppatore e 
 
 - **Home** (/) — Presentazione della piattaforma, problema, soluzione e visione.
 - **Configuratore** (/configuratore) — Strumento interattivo per configurare capi personalizzati con preview SVG in tempo reale.
-- **Customizer** (/creator) — Directory dei customizer con profili, portfolio, servizi e recensioni.
+- **Customizer** (/customizers) — Directory dei customizer con profili, portfolio, servizi e recensioni.
 - **Contatti** (/contatti) — Modulo di contatto per candidature, feedback e collaborazioni.
-- **Termini e condizioni** (/terms) — Termini di utilizzo della piattaforma.
+- **Termini e condizioni** (/termini) — Termini di utilizzo della piattaforma.
 - **Privacy Policy** (/privacy) — Informativa sul trattamento dei dati personali (GDPR).
 
 ## Capi disponibili per personalizzazione

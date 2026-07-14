@@ -99,14 +99,14 @@ const jsonLd = {
       ],
     },
   ],
-  "/creator": [
+  "/customizers": [
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       name: "Customizer italiani — Customly",
       description:
         "Directory dei customizer italiani. Trova artisti e artigiani della custom fashion.",
-      url: SITE + "/creator",
+      url: SITE + "/customizers",
     },
   ],
 };
@@ -117,7 +117,7 @@ function getCreatorJsonLd(id) {
       "@context": "https://schema.org",
       "@type": "ProfilePage",
       name: `${id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} — Customizer su Customly`,
-      url: SITE + "/creator/" + id,
+      url: SITE + "/customizers/" + id,
       mainEntity: {
         "@type": "Person",
         name: id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -130,8 +130,8 @@ export function applyJsonLd(path) {
   document.querySelectorAll("script[data-jsonld]").forEach((s) => s.remove());
 
   let schemas = jsonLd[path] || [];
-  if (path.startsWith("/creator/")) {
-    const id = path.split("/creator/")[1];
+  if (path.startsWith("/customizers/")) {
+    const id = path.split("/customizers/")[1];
     if (id) schemas = getCreatorJsonLd(id);
   }
 

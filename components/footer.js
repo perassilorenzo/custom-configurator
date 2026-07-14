@@ -12,7 +12,7 @@ export function renderFooter() {
         <h4>Naviga</h4>
         <a href="/">Home</a><br>
         <a href="/configuratore">Configuratore</a><br>
-        <a href="/creator">Customizers</a><br>
+        <a href="/customizers">Customizers</a><br>
         <a href="/contatti">Contatti</a>
       </div>
       <div>
@@ -26,7 +26,7 @@ export function renderFooter() {
         <h4>Info</h4>
         <a href="mailto:lorenzo@example.com">Email</a><br>
         <a href="/privacy">Privacy</a><br>
-        <a href="/terms">Termini</a>
+        <a href="/termini">Termini</a>
       </div>
     </div>
     <div class="footer-bottom" style="text-align:center;justify-content:center">

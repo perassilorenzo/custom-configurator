@@ -14,7 +14,7 @@ const meta = {
       "Usa il configuratore Customly per scegliere modello, colore e modifiche. Preview SVG in tempo reale e invio diretto al customizer.",
     ogType: "website",
   },
-  "/creator": {
+  "/customizers": {
     title:
       "Customizer italiani | Trova artisti e artigiani della custom fashion",
     description:
@@ -33,7 +33,7 @@ const meta = {
       "Contattaci per candidarti come customizer, proporre un'idea o richiedere informazioni sulla piattaforma Customly.",
     ogType: "website",
   },
-  "/terms": {
+  "/termini": {
     title: "Termini e condizioni | Customly",
     description: "Termini e condizioni di utilizzo della piattaforma Customly.",
     ogType: "website",
@@ -56,8 +56,8 @@ function getCreatorMeta(id) {
 
 function resolve(path) {
   if (meta[path]) return meta[path];
-  if (path.startsWith("/creator/")) {
-    const id = path.split("/creator/")[1];
+  if (path.startsWith("/customizers/")) {
+    const id = path.split("/customizers/")[1];
     if (id) return getCreatorMeta(id);
   }
   return {

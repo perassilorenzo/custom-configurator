@@ -273,7 +273,7 @@ const routes = {
     unmount: null,
     ready: () => Promise.resolve(),
   },
-  "#/creator/:slug": {
+  "#/customizers/:slug": {
     mount: async () => {
       const { CreatorProfile } = await import("./pages/creator.js");
       return wrap(CreatorProfile);

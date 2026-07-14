@@ -119,7 +119,7 @@ index.html              ← Entry point SPA (shell minima)
 │   ├── products.js        ← Engine di rendering SVG
 │   └── color.js           ← Utilit&agrave; colori
 ├── customizers/        ← Profili customizer modulari
-│   ├── lorenzo-perassi/   ← Customizer: Lorenzo Perassi
+│   ├── perassilorenzo/   ← Customizer: Lorenzo Perassi
 │   └── template/          ← Template per nuovi customizer
 ├── styles/             ← Fogli di stile
 └── utils/              ← Utilit&agrave; core
@@ -169,7 +169,7 @@ L'app segue il pattern **render → init**: ogni pagina espporta `renderX()` (re
 I customizer sono directory autonome sotto `customizers/`:
 
 ```
-customizers/lorenzo-perassi/
+customizers/perassilorenzo/
 ├── data.js            ← Nome, bio, stili, prodotti, portfolio, servizi
 └── images/            ← Immagini profilo e portfolio
 ```

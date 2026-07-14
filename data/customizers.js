@@ -1,9 +1,9 @@
-import { customizer as lp } from "../customizers/lorenzo-perassi/data.js";
+import { customizer as lp } from "../customizers/perassilorenzo/data.js";
 import { customizer as tmpl } from "../customizers/template/data.js";
 import { BASE_PATH } from "../utils/router.js";
 
 const registry = {
-  "lorenzo-perassi": lp,
+  perassilorenzo: lp,
   template: tmpl,
 };
 

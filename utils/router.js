@@ -36,7 +36,7 @@ export function afterRender(fn) {
 export function init(el) {
   outlet = el;
 
-  /* Handle GitHub Pages 404 redirect (?p=/customly/creator) */
+  /* Handle GitHub Pages 404 redirect (?p=/customly/customizers) */
   const params = new URLSearchParams(window.location.search);
   const redirectPath = params.get("p");
   if (redirectPath) {

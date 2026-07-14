@@ -13,7 +13,7 @@ Customly è una **single-page application (SPA)** per la personalizzazione di ab
 
 **Come funziona**:
 
-- L'utente naviga tra le pagine via URL puliti (`/creator`, `/configuratore`)
+- L'utente naviga tra le pagine via URL puliti (`/customizers`, `/configuratore`)
 - Il router intercetta i cambiamenti di URL via History API (`pushState`), carica la pagina giusta e la inserisce nel DOM
 - Per il deploy su GitHub Pages, un file `404.html` gestisce il redirect delle URL dirette
 - Ogni pagina è un modulo JavaScript che esporta due funzioni: `render*(ctx)` per generare l'HTML e `init*(ctx)` per attaccare gli eventi
@@ -66,7 +66,7 @@ customly/
 │   └── .gitkeep
 │
 ├── customizers/                        # Profili customizer (nuovo sistema)
-│   ├── lorenzo-perassi/
+│   ├── perassilorenzo/
 │   │   └── data.js                     # Dati profilo Lorenzo Perassi
 │   └── template/
 │       └── data.js                     # Dati profilo template
@@ -127,7 +127,7 @@ customly/
 | `assets/`       | Risorse statiche del sito                       | 2 immagini JPG           | Hero background e timeline                             |
 | `components/`   | Codice UI riutilizzabile                        | navbar, footer           | Usato da TUTTE le pagine tramite `wrap()`              |
 | `configurator/` | Riservato per file upload/configurazioni future | `.gitkeep`               | Non utilizzato al momento                              |
-| `customizers/`  | Profili customizer (sistema NUOVO)              | 2 cartelle con `data.js` | Alimenta la pagina `/creator`                          |
+| `customizers/`  | Profili customizer (sistema NUOVO)              | 2 cartelle con `data.js` | Alimenta la pagina `/customizers`                      |
 | `data/`         | Registry e motori dati                          | 5 file JS                | Centralizza accesso a customizer, sellers, colori, SVG |
 | `pages/`        | Pagine dell'app                                 | 5 file JS                | Una per ogni route                                     |
 | `sellers/`      | Profili venditori (sistema VECCHIO)             | 6 cartelle con `data.js` | Alimenta il configuratore e la ricerca                 |
@@ -297,9 +297,9 @@ route("/configuratore", wrap(renderConfiguratore(), initConfiguratore));
 route("/venditore", wrap(renderConfiguratore(), initConfiguratore));
 route("/venditori", wrap(renderVenditori(), initVenditori));
 route("/contatti", wrap(renderContatti(), initContatti));
-route("/creator", wrap(renderCreator, initCreator));
-route("/creator/", wrap(renderCreator, initCreator));
-route("/creator/:id", wrap(renderCreator, initCreator));
+route("/customizers", wrap(renderCreator, initCreator));
+route("/customizers/", wrap(renderCreator, initCreator));
+route("/customizers/:id", wrap(renderCreator, initCreator));
 ```
 
 Nota: `/venditore` è un alias di `/configuratore` (legacy).
@@ -308,14 +308,14 @@ Nota: `/venditore` è un alias di `/configuratore` (legacy).
 
 Router.js supporta due tipi:
 
-- **Statiche**: esatte, tipo `/creator`, `/configuratore`. Memorizzate nell'oggetto `routes`.
-- **Dinamiche**: con `:param`, tipo `/creator/:id`. Memorizzate in `dynamicRoutes` come regex.
+- **Statiche**: esatte, tipo `/customizers`, `/configuratore`. Memorizzate nell'oggetto `routes`.
+- **Dinamiche**: con `:param`, tipo `/customizers/:id`. Memorizzate in `dynamicRoutes` come regex.
 
 Quando arriva una richiesta, `resolve()` cerca prima nelle route statiche, poi scorre quelle dinamiche fino a che una matcha. I parametri catturati vengono messi in `ctx`:
 
 ```js
-// URL: #/creator/lorenzo-perassi
-// ctx = { id: "lorenzo-perassi" }
+// URL: #/customizers/perassilorenzo
+// ctx = { id: "perassilorenzo" }
 ```
 
 ### Query parameters
@@ -323,8 +323,8 @@ Quando arriva una richiesta, `resolve()` cerca prima nelle route statiche, poi s
 `getParams()` estrae i parametri dalla parte dopo `?` nell'hash:
 
 ```js
-// URL: #/configuratore?creator=lorenzo-perassi
-// getParams() → { creator: "lorenzo-perassi" }
+// URL: #/configuratore?creator=perassilorenzo
+// getParams() → { creator: "perassilorenzo" }
 ```
 
 ### Passaggio dati tra pagine
@@ -333,10 +333,10 @@ I dati passano da una pagina all'altra tramite **URL parameters** (`?chiave=valo
 
 Esempio: profilo customizer → configuratore
 
-1. Utente clicca "Start customizing" su `/creator/lorenzo-perassi`
-2. `initCreator()` chiama `navigate("/configuratore?creator=lorenzo-perassi")`
+1. Utente clicca "Start customizing" su `/customizers/perassilorenzo`
+2. `initCreator()` chiama `navigate("/configuratore?creator=perassilorenzo")`
 3. Router carica `configuratore.js`
-4. `initConfiguratore()` legge `getParams().creator` → `"lorenzo-perassi"`
+4. `initConfiguratore()` legge `getParams().creator` → `"perassilorenzo"`
 5. Cerca il customizer in sellers e customizers, imposta `s.creator`
 
 ---
@@ -396,7 +396,7 @@ initNav(); // attacca eventi navbar
 
 **Flusso `resolve()`**:
 
-1. Legge `getPath()` (es. `/creator/lorenzo-perassi`)
+1. Legge `getPath()` (es. `/customizers/perassilorenzo`)
 2. Cerca nelle route statiche (esatte)
 3. Se non trova, scorre le route dinamiche con regex → matcha `/:id`
 4. Prepara `ctx` con i parametri catturati
@@ -453,7 +453,7 @@ initNav(); // attacca eventi navbar
     <div class="nav-links" id="nav-links">
       <a href="#/">Home</a>
       <a href="#/configuratore">Configuratore</a>
-      <a href="#/creator">Customizers</a>
+      <a href="#/customizers">Customizers</a>
       <a href="#/contatti">Contatti</a>
     </div>
     <button class="mobile-toggle">☰</button>
@@ -559,7 +559,7 @@ initNav(); // attacca eventi navbar
         │           │
         ▼           ▼
   ┌─────────┐  ┌─────────────┐
-  │ garment │  │ no-garment  │  "Create from scratch" → link a /creator
+  │ garment │     │ no-garment  │  "Create from scratch" → link a /customizers
   └────┬────┘  └─────────────┘
        │
        ▼
@@ -611,7 +611,7 @@ initNav(); // attacca eventi navbar
 | `render()` | Monta layout se non presente, poi renderizza step + sidebar |
 | `renderCurrentStep()` | Dispatcher: chiama `renderStep*()` giusto |
 | `renderStepStart()` | Scelta "Hai già un capo?" |
-| `renderStepNoGarment()` | Reindirizzamento a /creator |
+| `renderStepNoGarment()` | Reindirizzamento a /customizers |
 | `renderStepGarment()` | Scelta tipo capo, modello, marca |
 | `renderStepCustomize()` | Colore + modifiche |
 | `renderCustContent()` | Lista modifiche attive e disponibili |
@@ -680,7 +680,7 @@ initNav(); // attacca eventi navbar
 | `getCustomizer(id)` | Cerca customizer per ID (o null) |
 | `getAllCustomizers()` | Tutti i customizer |
 
-**Customizer registrati**: `lorenzo-perassi`, `template`.
+**Customizer registrati**: `perassilorenzo`, `template`.
 
 ---
 
@@ -777,7 +777,7 @@ Nel progetto Customly, un **componente** è un modulo JavaScript che esporta due
 I componenti **non comunicano direttamente tra loro**. La comunicazione avviene in due modi:
 
 1. **Tramite URL**: quando un componente vuole passare dati a un altro, naviga a un URL con parametri:
-   - `navigate("/configuratore?creator=lorenzo-perassi")`
+   - `navigate("/configuratore?creator=perassilorenzo")`
 
 2. **Tramite funzioni di registry**: i componenti condividono dati importando funzioni dai moduli `data/`:
    - `pages/creator.js` importa `getCustomizer` da `data/customizers.js`
@@ -795,7 +795,7 @@ I customizer vivono in cartelle individuali dentro `customizers/`:
 
 ```
 customizers/
-├── lorenzo-perassi/
+├── perassilorenzo/
 │   └── data.js      # Esporta: export const customizer = { ... }
 └── template/
     └── data.js      # Esporta: export const customizer = { ... }
@@ -805,7 +805,7 @@ Ogni cartella contiene un file `data.js` che esporta un oggetto `customizer` con
 
 ```js
 export const customizer = {
-  id: "lorenzo-perassi",       // Identificatore unico (usato nell'URL)
+  id: "perassilorenzo",       // Identificatore unico (usato nell'URL)
   name: "Lorenzo Perassi",      // Nome visualizzato
   tagline: "...",               // Frase sotto il nome
   bio: "...",                   // Biografia
@@ -826,11 +826,11 @@ export const customizer = {
 `data/customizers.js` importa manualmente ogni customizer e li registra in un oggetto:
 
 ```js
-import { customizer as lp } from "../customizers/lorenzo-perassi/data.js";
+import { customizer as lp } from "../customizers/perassilorenzo/data.js";
 import { customizer as tmpl } from "../customizers/template/data.js";
 
 const registry = {
-  "lorenzo-perassi": lp,
+  perassilorenzo: lp,
   template: tmpl,
 };
 ```
@@ -848,9 +848,9 @@ Tutti i customizer usano **la stessa identica funzione** `renderProfile(seller)`
 
 Lorenzo Perassi è un customizer come tutti gli altri. Ha:
 
-- Una cartella `customizers/lorenzo-perassi/data.js` con i suoi dati
-- Un profilo su `/creator/lorenzo-perassi` che usa `renderProfile()`
-- Una entry in `data/customizers.js` con ID `"lorenzo-perassi"`
+- Una cartella `customizers/perassilorenzo/data.js` con i suoi dati
+- Un profilo su `/customizers/perassilorenzo` che usa `renderProfile()`
+- Una entry in `data/customizers.js` con ID `"perassilorenzo"`
 
 È identico a Template Profile nella struttura. Nessun trattamento speciale.
 
@@ -865,13 +865,13 @@ Lorenzo Perassi è un customizer come tutti gli altri. Ha:
 4. Aggiungi al registry:
    ```js
    const registry = {
-     "lorenzo-perassi": lp,
+     perassilorenzo: lp,
      template: tmpl,
      "nome-customizer": mio,
    };
    ```
 
-Fatto. Il nuovo customizer apparirà automaticamente nella lista su `/creator` e sarà accessibile via `/creator/nome-customizer`.
+Fatto. Il nuovo customizer apparirà automaticamente nella lista su `/customizers` e sarà accessibile via `/customizers/nome-customizer`.
 
 ---
 
@@ -890,7 +890,7 @@ Fatto. Il nuovo customizer apparirà automaticamente nella lista su `/creator` e
 2. GARMENT                               NO-GARMENT
    │                                          │
    │ Scegli: T-Shirt o Jeans                  "Find a professional to start"
-   │ Modello                                  Link a /creator
+   │ Modello                                  Link a /customizers
    │ Marca (opzionale)                        Bottone "Start over"
    │
    ▼
@@ -1028,7 +1028,7 @@ Tutti i dati sono **statici** — non c'è database, API o backend. I dati vivon
 ### Come vengono importati
 
 ```
-customizers/lorenzo-perassi/data.js
+customizers/perassilorenzo/data.js
         → importato da data/customizers.js
                 → importato da pages/creator.js
 
@@ -1172,7 +1172,7 @@ body {
    ▼
 2. LISTA CUSTOMIZER
    │
-   │ URL: #/creator
+   │ URL: #/customizers
    │ Router carica pages/creator.js → renderList()
    │ Vede due card: Lorenzo Perassi e Template Profile
    │ Clicca su Lorenzo Perassi
@@ -1180,8 +1180,8 @@ body {
    ▼
 3. PROFILO LORENZO PERASSI
    │
-   │ URL: #/creator/lorenzo-perassi
-   │ Router matcha route dinamica /creator/:id
+   │ URL: #/customizers/perassilorenzo
+   │ Router matcha route dinamica /customizers/:id
    │ renderProfile(seller) genera HTML profilo:
    │   - Avatar (placeholder "L")
    │   - Nome, tagline
@@ -1192,12 +1192,12 @@ body {
    ▼
 4. CONFIGURATORE (con creator selezionato)
    │
-   │ URL: #/configuratore?creator=lorenzo-perassi
+   │ URL: #/configuratore?creator=perassilorenzo
    │ Router carica pages/configuratore.js
-   │ initConfiguratore() legge params.creator = "lorenzo-perassi"
-   │ getSeller("lorenzo-perassi") → null
-   │ getCustomizer("lorenzo-perassi") → trova Lorenzo
-   │ s.creator = "lorenzo-perassi"
+   │ initConfiguratore() legge params.creator = "perassilorenzo"
+   │ getSeller("perassilorenzo") → null
+   │ getCustomizer("perassilorenzo") → trova Lorenzo
+   │ s.creator = "perassilorenzo"
    │ Badge mostra: "Customizer — Lorenzo Perassi"
    │
    ├─ Step 1: "Do you already have a garment?"
@@ -1259,7 +1259,7 @@ body {
 1. **CREA** `customizers/nuovo-customizer/data.js` — esporta oggetto `customizer`
 2. **MODIFICA** `data/customizers.js` — aggiungi import e riga nel registry
 
-Nessun altro file deve essere toccato. Il nuovo customizer appare subito su `/creator` e `/creator/nuovo-customizer`.
+Nessun altro file deve essere toccato. Il nuovo customizer appare subito su `/customizers` e `/customizers/nuovo-customizer`.
 
 ### Aggiungere una nuova pagina
 
@@ -1321,23 +1321,23 @@ Tutto in `styles/main.css`. Segui le variabili CSS esistenti e la sezione giusta
 
 # 14. Glossario
 
-| Termine                   | Significato                                                        | Esempio in Customly                                          |
-| ------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ |
-| **Component**             | Blocco di UI riutilizzabile con render + init                      | `navbar.js`, `footer.js`, `renderProfile()`                  |
-| **Route**                 | Associazione tra un URL e una pagina                               | `route("/creator/:id", wrap(renderCreator, initCreator))`    |
-| **Parametro**             | Variabile nell'URL catturata dal router                            | `:id` in `/creator/:id` → `ctx.id`                           |
-| **Query string**          | Parametri dopo `?` nell'URL                                        | `?creator=lorenzo-perassi` → `getParams().creator`           |
-| **Stato**                 | Dati che cambiano durante l'interazione utente                     | Variabile `s` in configuratore.js                            |
-| **Macchina a stati**      | Pattern dove lo stato determina cosa mostrare                      | `s.step` → "start", "garment", "customize", "review", "done" |
-| **Event delegation**      | Un solo listener sull'elemento padre che gestisce eventi dei figli | `listen()` in configuratore.js su `#configuratore-root`      |
-| **Registry**              | Oggetto che tiene traccia di entità (customizer, sellers)          | `data/customizers.js`, `data/sellers.js`                     |
-| **Module**                | File JS con `import`/`export`                                      | Tutti i file nel progetto                                    |
-| **Template literal**      | Stringa JS con `${variabile}` per interpolare valori               | `` `<h1>${name}</h1>` ``                                     |
-| **SPA**                   | Single-Page Application — non ricarica mai la pagina               | L'intero progetto                                            |
-| **Hash routing**          | Navigazione via `#/path` nel URL                                   | `window.location.hash = "#/creator"`                         |
-| **SVG inline**            | Grafica vettoriale scritta direttamente nell'HTML                  | Generato da `data/products.js`                               |
-| **Formspree**             | Servizio che inoltra form HTML via email                           | `utils/formspree.js`                                         |
-| **CSS custom properties** | Variabili CSS definite in `:root`                                  | `var(--accent)`, `var(--text-secondary)`                     |
-| **Responsive**            | Il layout si adatta a schermi grandi e piccoli                     | Media query a 768px, 900px, 480px                            |
-| **IntersectionObserver**  | API browser per rilevare quando un elemento è visibile             | Animazione timeline in home.js                               |
-| **Design system**         | Insieme coerente di colori, font, spaziature                       | Variabili `:root` in main.css                                |
+| Termine                   | Significato                                                        | Esempio in Customly                                           |
+| ------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------- |
+| **Component**             | Blocco di UI riutilizzabile con render + init                      | `navbar.js`, `footer.js`, `renderProfile()`                   |
+| **Route**                 | Associazione tra un URL e una pagina                               | `route("/customizers/:id", wrap(renderCreator, initCreator))` |
+| **Parametro**             | Variabile nell'URL catturata dal router                            | `:id` in `/customizers/:id` → `ctx.id`                        |
+| **Query string**          | Parametri dopo `?` nell'URL                                        | `?creator=perassilorenzo` → `getParams().creator`             |
+| **Stato**                 | Dati che cambiano durante l'interazione utente                     | Variabile `s` in configuratore.js                             |
+| **Macchina a stati**      | Pattern dove lo stato determina cosa mostrare                      | `s.step` → "start", "garment", "customize", "review", "done"  |
+| **Event delegation**      | Un solo listener sull'elemento padre che gestisce eventi dei figli | `listen()` in configuratore.js su `#configuratore-root`       |
+| **Registry**              | Oggetto che tiene traccia di entità (customizer, sellers)          | `data/customizers.js`, `data/sellers.js`                      |
+| **Module**                | File JS con `import`/`export`                                      | Tutti i file nel progetto                                     |
+| **Template literal**      | Stringa JS con `${variabile}` per interpolare valori               | `` `<h1>${name}</h1>` ``                                      |
+| **SPA**                   | Single-Page Application — non ricarica mai la pagina               | L'intero progetto                                             |
+| **Hash routing**          | Navigazione via `#/path` nel URL                                   | `window.location.hash = "#/customizers"`                      |
+| **SVG inline**            | Grafica vettoriale scritta direttamente nell'HTML                  | Generato da `data/products.js`                                |
+| **Formspree**             | Servizio che inoltra form HTML via email                           | `utils/formspree.js`                                          |
+| **CSS custom properties** | Variabili CSS definite in `:root`                                  | `var(--accent)`, `var(--text-secondary)`                      |
+| **Responsive**            | Il layout si adatta a schermi grandi e piccoli                     | Media query a 768px, 900px, 480px                             |
+| **IntersectionObserver**  | API browser per rilevare quando un elemento è visibile             | Animazione timeline in home.js                                |
+| **Design system**         | Insieme coerente di colori, font, spaziature                       | Variabili `:root` in main.css                                 |

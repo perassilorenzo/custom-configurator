@@ -98,10 +98,10 @@
         <ul>
           <li><a href="/">Home</a></li>
           <li><a href="/configuratore">Configuratore</a></li>
-          <li><a href="/creator">Customizer</a></li>
+          <li><a href="/customizers">Customizer</a></li>
           <li><a href="/contatti">Contatti</a></li>
           <li><a href="/privacy">Privacy Policy</a></li>
-          <li><a href="/terms">Termini e condizioni</a></li>
+          <li><a href="/termini">Termini e condizioni</a></li>
         </ul>
         <p>
           Per utilizzare pienamente la piattaforma, abilita JavaScript nel tuo
@@ -149,10 +149,10 @@
       route("/venditore", wrap(renderConfiguratore(), initConfiguratore));
       route("/venditori", wrap(renderVenditori(), initVenditori));
       route("/contatti", wrap(renderContatti(), initContatti));
-      route("/creator", wrap(renderCreator, initCreator));
-      route("/creator/", wrap(renderCreator, initCreator));
-      route("/creator/:id", wrap(renderCreator, initCreator));
-      route("/terms", wrap(renderTerms));
+      route("/customizers", wrap(renderCreator, initCreator));
+      route("/customizers/", wrap(renderCreator, initCreator));
+      route("/customizers/:id", wrap(renderCreator, initCreator));
+      route("/termini", wrap(renderTerms));
       route("/privacy", wrap(renderPrivacy));
 
       init(document.getElementById("app"));

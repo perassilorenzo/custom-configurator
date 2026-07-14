@@ -266,7 +266,7 @@ export function initHome() {
     ?.addEventListener("click", () => navigate("/configuratore"));
   document
     .querySelector("[data-nav-creator]")
-    ?.addEventListener("click", () => navigate("/creator"));
+    ?.addEventListener("click", () => navigate("/customizers"));
   document.querySelector("[data-nav-how]")?.addEventListener("click", () => {
     document
       .getElementById("soluzione")
