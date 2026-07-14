@@ -28,7 +28,7 @@ const GARMENT = {
     icon: "👖",
     models: [
       { id: "skinny", label: "Skinny" },
-      { id: "regular", label: "Regular" },
+      { id: "flared", label: "Flared" },
       { id: "baggy", label: "Baggy" },
     ],
   },
@@ -56,7 +56,6 @@ const CUSTOMIZATIONS = {
       label: "Flared Bottom",
       desc: "Triangular fabric panels to create a flared silhouette.",
       price: 15,
-      preview: "flared",
       settings: [
         {
           key: "fabricAvailable",
@@ -94,7 +93,6 @@ const CUSTOMIZATIONS = {
       label: "Side Panels",
       desc: "Widen the jeans from ankle to pocket with fabric inserts.",
       price: 18,
-      preview: "side-panels",
       settings: [
         {
           key: "fabricAvailable",
@@ -132,7 +130,6 @@ const CUSTOMIZATIONS = {
       label: "Raw Hem",
       desc: "Choose the finish for the bottom of your jeans.",
       price: 5,
-      preview: "raw-hem",
       settings: [
         {
           key: "finish",
@@ -147,74 +144,45 @@ const CUSTOMIZATIONS = {
         },
       ],
     },
+    {
+      id: "fondo-allungato",
+      label: "Fondo Allungato",
+      desc: "Lengthen by undoing the original hem.",
+      price: 12,
+      settings: [],
+    },
   ],
   tshirt: [
     {
-      id: "crop",
-      label: "Crop",
-      desc: "Crop the shirt to your desired length.",
+      id: "canotta-taglio-netto",
+      label: "Canotta Taglio Netto",
+      desc: "Convert to tank top with raw cut edges.",
+      price: 12,
+      models: ["long-sleeve", "short-sleeve"],
+      settings: [],
+    },
+    {
+      id: "corta-cucita-bene",
+      label: "Corta Cucita Bene",
+      desc: "Shorten to short sleeve with proper hem.",
       price: 8,
-      preview: "crop",
-      settings: [
-        {
-          key: "length",
-          label: "Length",
-          type: "select",
-          default: "medium",
-          options: [
-            { id: "small", label: "Slight crop" },
-            { id: "medium", label: "Medium crop" },
-            { id: "large", label: "Heavy crop" },
-          ],
-        },
-      ],
+      models: ["long-sleeve"],
+      settings: [],
     },
     {
-      id: "shorten",
-      label: "Shorten",
-      desc: "Shorten the overall length of the shirt.",
-      price: 8,
-      preview: "shorten",
-      settings: [
-        {
-          key: "length",
-          label: "Amount",
-          type: "select",
-          default: "medium",
-          options: [
-            { id: "small", label: "Small" },
-            { id: "medium", label: "Medium" },
-            { id: "large", label: "Large" },
-          ],
-        },
-      ],
+      id: "croppa-taglio-netto",
+      label: "Croppa Taglio Netto",
+      desc: "Crop with raw cut edge.",
+      price: 10,
+      models: ["long-sleeve", "short-sleeve", "tank-top"],
+      settings: [],
     },
     {
-      id: "shorten-sleeves",
-      label: "Shorten Sleeves",
-      desc: "Shorten sleeves while keeping the original hem.",
-      price: 6,
-      preview: "shorten-sleeves",
-      settings: [
-        {
-          key: "amount",
-          label: "Amount",
-          type: "select",
-          default: "medium",
-          options: [
-            { id: "small", label: "Small" },
-            { id: "medium", label: "Medium" },
-            { id: "large", label: "Large" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "remove-sleeves",
-      label: "Remove Sleeves",
-      desc: "Cut sleeves completely for a tank top look.",
-      price: 5,
-      preview: "remove-sleeves",
+      id: "croppata-cucito-bene",
+      label: "Croppata Cucito Bene",
+      desc: "Crop with proper finished hem.",
+      price: 12,
+      models: ["long-sleeve", "short-sleeve", "tank-top"],
       settings: [],
     },
   ],
@@ -422,10 +390,7 @@ function renderStepGarment() {
 }
 
 function renderCustContent() {
-  const defs = CUSTOMIZATIONS[s.garmentType] || [];
-  const available = defs.filter(
-    (d) => !s.customizations.find((c) => c.id === d.id),
-  );
+  const available = getAvailableCustomizations(s.garmentType, s.model);
   return `
       ${
         s.customizations.length > 0
@@ -771,10 +736,16 @@ function buildPreviewCfg() {
           : m.id === "long-sleeve"
             ? "long"
             : "none";
-    if (s.customizations.find((c) => c.id === "crop")) cfg.cropped = true;
-    if (s.customizations.find((c) => c.id === "shorten")) cfg.length = "short";
-    if (s.customizations.find((c) => c.id === "remove-sleeves"))
+    if (s.customizations.find((c) => c.id === "canotta-taglio-netto"))
       cfg.sleeves = "none";
+    if (s.customizations.find((c) => c.id === "corta-cucita-bene"))
+      cfg.sleeves = "short";
+    if (s.customizations.find((c) => c.id === "croppa-taglio-netto")) {
+      cfg.cropped = true;
+      cfg.rawHem = true;
+    }
+    if (s.customizations.find((c) => c.id === "croppata-cucito-bene"))
+      cfg.cropped = true;
   }
   if (s.garmentType === "jeans") {
     const m = GARMENT.jeans.models.find((x) => x.id === s.model);
@@ -791,6 +762,8 @@ function buildPreviewCfg() {
       (hem.settings.finish === "raw-cut" || hem.settings.finish === "frayed")
     )
       cfg.rawHem = true;
+    if (s.customizations.find((c) => c.id === "fondo-allungato"))
+      cfg.length = "long";
   }
   return cfg;
 }
@@ -840,6 +813,15 @@ function findCustDef(type, id) {
   const list = CUSTOMIZATIONS[type];
   if (!list) return null;
   return list.find((d) => d.id === id) || null;
+}
+
+function getAvailableCustomizations(garmentType, model) {
+  const defs = CUSTOMIZATIONS[garmentType] || [];
+  return defs.filter((d) => {
+    if (s.customizations.find((c) => c.id === d.id)) return false;
+    if (d.models && model && !d.models.includes(model)) return false;
+    return true;
+  });
 }
 
 function escHtml(str) {
