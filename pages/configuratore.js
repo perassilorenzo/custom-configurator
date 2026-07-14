@@ -15,8 +15,7 @@ const COLORS = [
 
 const GARMENT = {
   tshirt: {
-    label: "T-Shirt",
-    icon: "👕",
+    label: "Shirt",
     models: [
       { id: "short-sleeve", label: "Short Sleeve" },
       { id: "long-sleeve", label: "Long Sleeve" },
@@ -25,7 +24,6 @@ const GARMENT = {
   },
   jeans: {
     label: "Jeans",
-    icon: "👖",
     models: [
       { id: "skinny", label: "Skinny" },
       { id: "flared", label: "Flared" },
@@ -37,14 +35,12 @@ const GARMENT = {
 const GARMENT_CATEGORIES = [
   {
     id: "tshirt",
-    label: "T-Shirt",
-    icon: "👕",
+    label: "Shirt",
     desc: "Classic, versatile, ready for customization",
   },
   {
     id: "jeans",
     label: "Jeans",
-    icon: "👖",
     desc: "Denim canvas for your unique style",
   },
 ];
@@ -175,6 +171,7 @@ const CUSTOMIZATIONS = {
       desc: "Crop with raw cut edge.",
       price: 10,
       models: ["long-sleeve", "short-sleeve", "tank-top"],
+      group: "crop",
       settings: [],
     },
     {
@@ -183,6 +180,7 @@ const CUSTOMIZATIONS = {
       desc: "Crop with proper finished hem.",
       price: 12,
       models: ["long-sleeve", "short-sleeve", "tank-top"],
+      group: "crop",
       settings: [],
     },
   ],
@@ -327,7 +325,6 @@ function renderStepNoGarment() {
           .map(
             (a) => `
           <button class="cfg-no-garment-item" type="button" data-choose-base="${a.garmentType}" data-base-price="${a.basePrice || 0}" data-item-name="${escHtml(a.item)}">
-            <span class="cfg-no-garment-item-icon">${GARMENT[a.garmentType]?.icon || "&#9670;"}</span>
             <div class="cfg-no-garment-item-info">
               <strong>${escHtml(a.item)}</strong>
               <span>${escHtml(a.technique)}</span>
@@ -359,7 +356,6 @@ function renderStepGarment() {
         ${GARMENT_CATEGORIES.map(
           (c) => `
           <button class="cfg-type-card${s.garmentType === c.id ? " active" : ""}" type="button" data-garment-type="${c.id}">
-            <span class="cfg-type-icon">${c.icon}</span>
             <span class="cfg-type-label">${c.label}</span>
             <span class="cfg-type-desc">${c.desc}</span>
           </button>`,
@@ -817,9 +813,15 @@ function findCustDef(type, id) {
 
 function getAvailableCustomizations(garmentType, model) {
   const defs = CUSTOMIZATIONS[garmentType] || [];
+  const activeGroups = new Set(
+    s.customizations
+      .map((c) => findCustDef(garmentType, c.id)?.group)
+      .filter(Boolean),
+  );
   return defs.filter((d) => {
     if (s.customizations.find((c) => c.id === d.id)) return false;
     if (d.models && model && !d.models.includes(model)) return false;
+    if (d.group && activeGroups.has(d.group)) return false;
     return true;
   });
 }
@@ -1215,6 +1217,12 @@ function addCustomization(id) {
   if (s.customizations.find((c) => c.id === id)) return;
   const def = findCustDef(s.garmentType, id);
   if (!def) return;
+  if (def.group) {
+    s.customizations = s.customizations.filter((c) => {
+      const d = findCustDef(s.garmentType, c.id);
+      return !d || d.group !== def.group;
+    });
+  }
   const settings = {};
   for (const setting of def.settings) settings[setting.key] = setting.default;
   s.customizations.push({ id, settings, _open: true });
