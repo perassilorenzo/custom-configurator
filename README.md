@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="">
-    <img src="" alt="Customly" width="80">
+    <source media="(prefers-color-scheme: dark)" srcset="customizers/perassilorenzo/images/pfp-banner.png">
+    <img src="customizers/perassilorenzo/images/pfp-banner.png" alt="Customly" width="80">
   </picture>
 </p>
 
