@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /customizers/
+
+Sitemap: https://customly.it/sitemap.xml

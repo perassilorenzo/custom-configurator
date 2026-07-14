@@ -1,0 +1,50 @@
+# Customly
+
+> Piattaforma italiana che connette clienti e customizer indipendenti per creare abbigliamento personalizzato, unico e su misura.
+
+## Che cos'è Customly
+
+Customly è una piattaforma web che permette a chi desidera un capo personalizzato di trovare un professionista della custom fashion (detto "customizer"), configurare un capo in modo visivo e inviare una richiesta strutturata. Il customizer riceve il progetto completo e può valutare, preventivare e avviare la collaborazione.
+
+Customly non vende capi e non gestisce pagamenti. È un ponte digitale tra chi sogna e chi crea.
+
+## Come funziona
+
+1. **Trova il customizer** — Esplora profili, stili e specializzazioni degli artigiani italiani della custom fashion.
+2. **Configura il capo** — Usa il configuratore visivo per scegliere modello, colore e modifiche (crop, flared, stampe, ricami, patch e altro).
+3. **Invia il progetto** — La richiesta viene inoltrata direttamente al customizer selezionato.
+4. **Collabora** — Il customizer ti contatta per valutare il progetto, comunicare disponibilità, tempi e preventivo.
+
+## Pubblico target
+
+- Clienti che cercano capi unici, streetwear personalizzato, jeans custom, abbigliamento su misura.
+- Customizer, artigiani, creatori e brand indipendenti che vogliono offrire un servizio di personalizzazione professionale.
+
+## Chi ha creato Customly
+
+Ideato e sviluppato da Lorenzo Perassi, studente di Informatica, sviluppatore e customizer con la passione per tecnologia, moda e personalizzazione.
+
+## Pagine principali
+
+- **Home** (/) — Presentazione della piattaforma, problema, soluzione e visione.
+- **Configuratore** (/configuratore) — Strumento interattivo per configurare capi personalizzati con preview SVG in tempo reale.
+- **Customizer** (/creator) — Directory dei customizer con profili, portfolio, servizi e recensioni.
+- **Contatti** (/contatti) — Modulo di contatto per candidature, feedback e collaborazioni.
+- **Termini e condizioni** (/terms) — Termini di utilizzo della piattaforma.
+- **Privacy Policy** (/privacy) — Informativa sul trattamento dei dati personali (GDPR).
+
+## Capi disponibili per personalizzazione
+
+- T-Shirt (maniche corte, lunghe, tank top)
+- Jeans (skinny, regular, baggy)
+
+## Modifiche disponibili
+
+- Crop, accorciamento, rimozione maniche (T-Shirt)
+- Flared bottom, side panels, raw hem (Jeans)
+- Colori: rosso, nero, verde, cuoio, crema, denim, oro
+
+## Contatto
+
+- Email: lorenzo@example.com
+- Sito: https://customly.it
