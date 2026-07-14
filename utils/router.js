@@ -7,7 +7,7 @@ let outlet = null;
 let afterRenderCb = null;
 
 // Detect base path from module URL (e.g. /customly from GitHub Pages subdirectory)
-const BASE_PATH =
+export const BASE_PATH =
   new URL("..", import.meta.url).pathname.replace(/\/$/, "") || "";
 
 export function route(path, render) {
