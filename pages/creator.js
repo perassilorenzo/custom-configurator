@@ -742,7 +742,7 @@ function renderActiveFilters(filters) {
 
 function renderListItem(c) {
   return `
-    <a href="/customizers/${c.id}" class="creator-list-card" data-list-item="${c.id}">
+    <a href="/configuratore?creator=${c.id}" class="creator-list-card" data-list-item="${c.id}">
       <div class="creator-list-avatar">${avatarImg(c, 52, "creator-list")}</div>
       <div class="creator-list-info">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">

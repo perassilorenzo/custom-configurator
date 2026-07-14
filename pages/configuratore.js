@@ -1,7 +1,7 @@
 import { renderSVG, getColorLabel } from "../data/products.js";
 import { send } from "../utils/formspree.js";
 import { getParams, navigate } from "../utils/router.js";
-import { getCustomizer, getAllCustomizers } from "../data/customizers.js";
+import { getCustomizer } from "../data/customizers.js";
 
 const COLORS = [
   { id: "#c13535", label: "Rosso" },
@@ -1341,26 +1341,11 @@ async function submitOrder() {
 function renderChooseCreator() {
   const root = document.getElementById("configuratore-root");
   if (!root) return;
-  const list = getAllCustomizers().filter((c) => c.id !== "template");
   root.innerHTML = `
     <div style="text-align:center;padding:80px 20px">
       <h2 style="font-family:var(--font-heading);font-size:28px;font-weight:600;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:12px">Scegli un customizer</h2>
-      <p style="color:var(--text-secondary);margin-bottom:32px">Seleziona un customizer per iniziare a personalizzare il tuo capo.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;max-width:600px;margin:0 auto">
-        ${list
-          .map(
-            (c) => `
-          <a href="/configuratore?creator=${c.id}" class="cfg-choice-card" style="display:flex;align-items:center;gap:12px;padding:16px 20px;text-decoration:none;min-width:200px">
-            <div style="width:40px;height:40px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0">${c.name.charAt(0)}</div>
-            <div style="text-align:left">
-              <strong style="color:var(--text-primary)">${c.name}</strong>
-              <span style="display:block;font-size:12px;color:var(--text-secondary)">${c.category || ""}</span>
-            </div>
-          </a>
-        `,
-          )
-          .join("")}
-      </div>
+      <p style="color:var(--text-secondary);margin-bottom:24px">Seleziona un customizer per iniziare a personalizzare il tuo capo.</p>
+      <a href="/customizers" class="cfg-btn cfg-btn-primary">Sfoglia i customizer →</a>
     </div>`;
 }
 
