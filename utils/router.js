@@ -31,35 +31,23 @@ export function afterRender(fn) {
 
 export function init(el) {
   outlet = el;
-
-  // GitHub Pages SPA redirect: read ?p= param and restore path
-  const params = new URLSearchParams(window.location.search);
-  const redirectPath = params.get("p");
-  if (redirectPath) {
-    history.replaceState(null, "", redirectPath);
-  }
-
-  window.addEventListener("popstate", resolve);
+  window.addEventListener("hashchange", resolve);
+  if (!window.location.hash) window.location.hash = "#/";
   resolve();
 }
 
 export function navigate(path) {
-  if (getPath() === path) {
-    resolve();
-    return;
-  }
-  history.pushState(null, "", path);
-  resolve();
-  window.scrollTo(0, 0);
+  window.location.hash = "#" + path;
 }
 
 export function getPath() {
-  const p = window.location.pathname;
-  return p === "" ? "/" : p;
+  const h = window.location.hash.slice(1) || "/";
+  return h.split("?")[0];
 }
 
 export function getParams() {
-  const qs = window.location.search.slice(1);
+  const h = window.location.hash.slice(1);
+  const qs = h.split("?")[1] || "";
   const p = {};
   for (const part of qs.split("&")) {
     if (!part) continue;
@@ -103,6 +91,7 @@ function resolve() {
       const heading = document.querySelector("h1, h2");
       live.textContent = heading ? heading.textContent : "";
     }
+    window.scrollTo(0, 0);
   } else {
     outlet.innerHTML = render404();
     applySeo("/");
@@ -116,7 +105,7 @@ function render404() {
   <div class="container" style="text-align:center;padding:120px 20px">
     <h1 style="font-family:var(--font-heading);font-size:72px;font-weight:700;color:var(--accent);margin-bottom:8px">404</h1>
     <p style="font-size:18px;color:var(--text-secondary);margin-bottom:32px">Pagina non trovata.</p>
-    <a href="/" class="btn btn-primary">Torna alla home</a>
+    <a href="#/" class="btn btn-primary">Torna alla home</a>
   </div>
 </div>`;
 }
@@ -124,6 +113,6 @@ function render404() {
 function updateActiveLink(path) {
   document.querySelectorAll(".nav-links a").forEach((a) => {
     const href = a.getAttribute("href");
-    a.classList.toggle("active", href === path);
+    a.classList.toggle("active", href === "#" + path);
   });
 }
