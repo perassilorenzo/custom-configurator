@@ -24,7 +24,7 @@ export function renderNav() {
     <button class="theme-btn${dark ? " dark" : ""}" id="theme-btn" aria-label="Cambia tema">
       <span class="theme-knob">${dark ? SVG_MOON : SVG_SUN}</span>
     </button>
-    <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">&#9776;</button>
+    <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-links"><span></span></button>
   </div>
 </nav>`;
 }
