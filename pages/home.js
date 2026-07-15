@@ -13,6 +13,7 @@ export function renderHome() {
       <p>Trova un customizer italiano, configura un capo personalizzato e trasforma la tua idea in qualcosa di concreto. Custom fashion, streetwear su misura e capi unici — tutto in un unico posto.</p>
       <div class="hero-btns">
         <button class="btn btn-primary" data-nav-creator>Scopri i customizer</button>
+        <button class="btn btn-secondary" data-nav-config>Prova il configuratore</button>
         <button class="btn btn-secondary" data-nav-how>Come funziona</button>
       </div>
     </div>
@@ -213,6 +214,9 @@ export function renderHome() {
 }
 
 export function initHome() {
+  document
+    .querySelector("[data-nav-config]")
+    ?.addEventListener("click", () => navigate("/configuratore"));
   document
     .querySelector("[data-nav-creator]")
     ?.addEventListener("click", () => navigate("/customizers"));
