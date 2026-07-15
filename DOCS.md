@@ -539,7 +539,7 @@ initNav(); // attacca eventi navbar
 
 ## 6.9 `pages/configuratore.js`
 
-**Scopo**: Configuratore interattivo — il file più grande e complesso del progetto (1222 righe).
+**Scopo**: Configuratore interattivo — il file più grande e complesso del progetto (~870 righe).
 
 **Esporta**:
 | Funzione | Scopo |
@@ -551,53 +551,85 @@ initNav(); // attacca eventi navbar
 
 ```
        ┌──────────────┐
-       │    start     │  "Do you already have a garment?"
+       │    start     │  "Possiedi già il capo da personalizzare?"
        └──────┬───────┘
               │
         ┌─────┴─────┐
         │           │
         ▼           ▼
-  ┌─────────┐  ┌─────────────┐
-  │ garment │     │ no-garment  │  "Create from scratch" → link a /customizers
-  └────┬────┘  └─────────────┘
-       │
-       ▼
-  ┌───────────┐
-  │ customize │  Colore + modifiche
-  └─────┬─────┘
-        │
-        ▼
-  ┌────────┐
-  │ review │  Riepilogo + form contatto
-  └────┬───┘
-       │
-       ▼
-  ┌──────┐
-  │ done │  "Request sent!"
-  └──────┘
+  ┌──────────────┐  ┌─────────────┐
+  │  garment-    │     │ no-garment  │  "Crea da zero" → scegli dalla collezione
+  │  category    │     └──────┬─────┘
+  └──────┬───────┘            │
+         │                    ▼
+    ┌────┴────┐         ┌───────────┐
+    │         │         │ customize │
+    ▼         ▼         └─────┬─────┘
+┌────────┐ ┌────────┐        │
+│garment-│ │jeans-  │        ▼
+│  type  │ │ model  │   ┌────────┐
+└───┬────┘ └───┬────┘   │ review │
+    │          │        └────┬───┘
+    ▼          ▼             │
+┌───────────┐                ▼
+│ customize │           ┌──────┐
+└─────┬─────┘           │ done │
+      │                 └──────┘
+      ▼
+┌────────┐
+│ review │
+└────┬───┘
+     │
+     ▼
+┌──────┐
+│ done │
+└──────┘
 ```
+
+**Flusso Sì (possiedi il capo)**:
+
+1. `start` → "Possiedi già il capo?" → Sì
+2. `garment-category` → Maglia / Polo / Camicia / Jeans
+3. Se Maglia/Polo/Camicia → `garment-type` → Canotta / Manica corta / Manica lunga + marca
+4. Se Jeans → `jeans-model` → Skinny / Regular / Baggy / Flared + marca
+5. `customize` → Modifiche + selezione tessuto
+6. `review` → Riepilogo + form
+7. `done` → Conferma
+
+**Flusso No (crea da zero)**:
+
+1. `start` → "Possiedi già il capo?" → No
+2. `no-garment` → Scegli dalla collezione del customizer
+3. `customize` → Modifiche
+4. `review` → Riepilogo + form
+5. `done` → Conferma
 
 **Dati interni**:
 | Variabile | Scopo |
 |---|---|
-| `GARMENT` | Oggetto con tipi di capo (Shirt, Jeans) e relativi modelli |
-| `CUSTOMIZATIONS` | Oggetto con modifiche disponibili per tipo di capo, prezzi e impostazioni |
+| `GARMENT_CATEGORIES` | Categorie capo: maglia, polo, camicia, jeans |
+| `GARMENT_TYPES` | Tipi per categoria (canotta, manica corta, manica lunga) |
+| `JEANS_MODELS` | Modelli jeans: skinny, regular, baggy, flared |
+| `CUSTOMIZATIONS` | Modifiche per categoria + tipo, con group, needsFabric, image |
+| `FABRIC_OPTIONS` | Opzioni tessuto: denim, camo, tuta, altro |
 | `s` | Stato globale del configuratore (modulo) |
 
 **Stato `s`**:
 
 ```js
 {
-  step: "start",             // step corrente
-  creator: null,             // ID del creator selezionato
-  hasGarment: null,          // true/false/non ancora scelto
-  garmentType: null,         // "tshirt" | "jeans"
-  model: null,               // modello specifico
-  brand: "",                 // marca opzionale
-  customizations: [],        // modifiche attive con impostazioni
-  form: { name, surname, email, instagram, phone, notes, acceptTerms },
+  step: "start",              // step corrente
+  creator: null,              // ID del creator selezionato
+  hasGarment: null,           // true/false/non ancora scelto
+  garmentCategory: null,      // "maglia" | "polo" | "camicia" | "jeans"
+  garmentType: null,          // "canotta" | "manica-corta" | "manica-lunga"
+  jeansModel: null,           // "skinny" | "regular" | "baggy" | "flared"
+  brand: "",                  // marca opzionale
+  customizations: [],         // modifiche attive con fabric, fabricCustom, _open
+  form: { name, surname, email, instagram, phone, notes, acceptTerms, acceptPrivacy },
   submitting: false,
-  submittedOk: false
+  submittedOk: false,
+  modal: null                 // "terms" | "privacy" | null
 }
 ```
 
@@ -607,15 +639,21 @@ initNav(); // attacca eventi navbar
 | `initState()` | Crea stato fresco |
 | `render()` | Monta layout se non presente, poi renderizza step + sidebar |
 | `renderCurrentStep()` | Dispatcher: chiama `renderStep*()` giusto |
-| `renderStepStart()` | Scelta "Hai già un capo?" |
-| `renderStepNoGarment()` | Reindirizzamento a /customizers |
-| `renderStepGarment()` | Scelta tipo capo, modello, marca |
-| `renderStepCustomize()` | Modifiche |
+| `renderStepStart()` | Scelta "Possiedi già il capo?" |
+| `renderStepNoGarment()` | Scegli dalla collezione del customizer |
+| `renderStepGarmentCategory()` | Scegli categoria: Maglia, Polo, Camicia, Jeans |
+| `renderStepGarmentType()` | Scegli tipo: Canotta, Manica corta, Manica lunga |
+| `renderStepJeansModel()` | Scegli modello jeans: Skinny, Regular, Baggy, Flared |
+| `renderStepCustomize()` | Modifiche + selezione tessuto |
 | `renderCustContent()` | Lista modifiche attive e disponibili |
+| `renderCustomizationItem()` | Singola modifica con espansione tessuto |
 | `renderStepReview()` | Riepilogo + form |
 | `renderSummary()` | Sidebar: riepilogo prezzi |
+| `getActiveCustomizations()` | Restituisce modifiche per la categoria+tipo corrente |
+| `getAvailableCustomizations()` | Filtra per gruppo e già selezionate |
 | `calculateTotal()` | Calcola prezzo totale |
-| `getAvailableCustomizations()` | Filtra modifiche per tipo capo e modello |
+| `findCustDef(id)` | Cerca definizione modifica per ID |
+| `addCustomization(id)` | Aggiunge modifica con gestione gruppi e tessuto |
 | `submitOrder()` | Valida form, invia a Formspree |
 | `listen()` | Event delegation centralizzata (click, input, change) |
 
@@ -873,53 +911,81 @@ Fatto. Il nuovo customizer apparirà automaticamente nella lista su `/customizer
 
 # 9. Configuratore
 
-### Flusso utente completo
+### Flusso utente completo — Sì (possiedi il capo)
 
 ```
 1. START
    │
-   ├─ "Do you already have a garment?"
+   ├─ "Possiedi già il capo da personalizzare?"
    │
    ├─ SÌ ──────────────────────────────────── NO
    │                                          │
    ▼                                          ▼
-2. GARMENT                               NO-GARMENT
+2. GARMENT-CATEGORY                     NO-GARMENT
    │                                          │
-   │ Scegli: Shirt o Jeans                    "Find a professional to start"
-   │ Modello                                  Link a /customizers
-   │ Marca (opzionale)                        Bottone "Start over"
-   │
-   ▼
-3. CUSTOMIZE
-   │
-   │ Aggiungi modifiche:
-   │   Shirt: Canotta Taglio Netto, Corta Cucita Bene,
-   │          Croppa Taglio Netto, Croppata Cucito Bene
-   │          (opzioni filtrate per modello, crop mutuamente esclusivi)
-   │   Jeans: Flared Bottom, Side Panels, Raw Hem, Fondo Allungato
-   │
-   │ Ogni modifica ha impostazioni aggiuntive:
-   │   - boolean toggle (es. "Fabric available?")
-   │   - select con opzioni (es. tipo di tessuto)
-   │
-   ▼
-4. REVIEW
-   │
-   │ Riepilogo completo:
-   │   - Customizer selezionato
-   │   - Tipo capo + modello + marca
-   │   - Modifiche con dettagli
-   │   - Prezzo totale
-   │
-   │ Form contatto:
-   │   Nome, Cognome, Email, Instagram (opt), Telefono (opt)
-   │   Note (opt), Accetta termini + privacy
-   │
-   ▼
-5. DONE
-   │
-   │ "Request sent!"
-   │ Bottone "New project"
+   │ Scegli: Maglia / Polo / Camicia / Jeans  Scegli dalla collezione
+   │                                          │
+   ├─ Maglia/Polo/Camicia                    ▼
+   │   │                                ┌───────────┐
+   │   ▼                                │ customize │
+   │ 3. GARMENT-TYPE                    └─────┬─────┘
+   │   │                                      │
+   │   │ Canotta / Manica corta / Manica lunga│
+   │   │ Marca (opzionale)                    │
+   │   │                                      │
+   │   ▼                                      │
+   ├─ Jeans                                   │
+   │   │                                      │
+   │   ▼                                      │
+   │ 3. JEANS-MODEL                           │
+   │   │                                      │
+   │   │ Skinny / Regular / Baggy / Flared    │
+   │   │ Marca (opzionale)                    │
+   │   │                                      │
+   │   ▼                                      │
+   ├──────────────────────────────────────────┤
+   │                                          │
+   ▼                                          │
+4. CUSTOMIZE                                  │
+   │                                          │
+   │ Modifiche con group-based exclusivity:   │
+   │   Maglia/Polo/Camicia:                   │
+   │     Taglio corpo: Crop con orlo /        │
+   │       Crop con taglio netto (gruppo)     │
+   │     Maniche: Accorcia / Canotta netto    │
+   │       (solo manica lunga, gruppo)        │
+   │   Jeans:                                 │
+   │     Fondo: Raw Hem / Allargare /         │
+   │       Allargare interno (gruppo)         │
+   │     Lunghezza: Accorciare taglio netto   │
+   │     Vestibilità: Allargare               │
+   │     Riparazioni: Coprire buchi /         │
+   │       Riparare tagli (combinabili)       │
+   │                                          │
+   │ Selezione tessuto quando necessario:     │
+   │   Denim / Camo / Tuta / Altro            │
+   │                                          │
+   │ Sidebar: riepilogo live                  │
+   │                                          │
+   ▼                                          │
+5. REVIEW                                     │
+   │                                          │
+   │ Riepilogo completo:                      │
+   │   - Customizer selezionato               │
+   │   - Categoria + tipo/modello + marca     │
+   │   - Modifiche con dettagli e tessuto     │
+   │   - Prezzo totale                        │
+   │                                          │
+   │ Form contatto:                           │
+   │   Nome, Cognome, Email, Instagram (opt)  │
+   │   Telefono (opt), Note (opt)             │
+   │   Accetta termini + privacy              │
+   │                                          │
+   ▼                                          │
+6. DONE                                       │
+   │                                          │
+   │ "Richiesta inviata!"                     │
+   │ Bottone "Nuovo progetto"                 │
 ```
 
 ### Gestione delle scelte
@@ -930,53 +996,65 @@ Lo stato `s` tiene traccia di ogni scelta dell'utente. Quando l'utente clicca qu
 2. La funzione modifica lo stato `s`
 3. Viene chiamato `render()` o `updateSidebar()` per aggiornare la UI
 
-### Filtraggio modifiche per modello
-
-Le modifiche possono avere una proprietà `models` che limita la disponibilità a certi modelli:
-
-```js
-{
-  id: "canotta-taglio-netto",
-  models: ["long-sleeve", "short-sleeve"], // solo per questi modelli
-  // ...
-}
-```
-
-`getAvailableCustomizations(garmentType, model)` filtra le modifiche in base al modello selezionato.
-
-### Modifiche mutuamente esclusive
+### Modifiche mutuamente esclusive (group)
 
 Le modifiche possono avere una proprietà `group` per essere mutuamente esclusive. Se una modifica con `group: "crop"` è attiva, le altre nello stesso gruppo vengono nascoste e rimosse.
 
 ```js
-{
-  id: "croppa-taglio-netto",
-  group: "crop", // non si può combinare con "croppata-cucito-bene"
-  // ...
-}
+// Solo una di queste può essere attiva alla volta
+{ id: "crop-con-orlo", group: "crop", ... }
+{ id: "crop-taglio-netto", group: "crop", ... }
+
+// Solo una di queste (jeans):
+{ id: "fondo-raw-hem", group: "fondo", ... }
+{ id: "fondo-allargare", group: "fondo", ... }
+{ id: "fondo-allargare-interno", group: "fondo", ... }
 ```
+
+### Selezione tessuto
+
+Le modifiche con `needsFabric: true` mostrano un selettore tessuto quando attivate:
+
+```js
+{ id: "fondo-allargare", needsFabric: true, ... }
+```
+
+Opzioni tessuto: Denim, Camo, Tuta, Altro (con campo testo libero).
+Il tessuto selezionato viene salvato in `c.fabric` e incluso nel riepilogo e nell'invio.
+
+### Supporto immagini
+
+Ogni modifica può avere un campo `image` con il path a un foto esempio:
+
+```js
+{ id: "crop-con-orlo", image: "assets/modifications/maglia-crop-orlo.jpg", ... }
+```
+
+L'immagine viene mostrata nella card della modifica disponibile. Se il file non esiste, l'elemento viene nascosto via `onerror`.
+
+### Filtraggio modifiche per categoria e tipo
+
+`getActiveCustomizations()` restituisce le modifiche in base a:
+
+- `s.garmentCategory` + `s.garmentType` (per maglia/polo/camicia)
+- `s.garmentCategory` === "jeans" (restituisce tutte le modifiche jeans)
+
+`getAvailableCustomizations()` filtra ulteriormente:
+
+- Esclude modifiche già selezionate
+- Esclude modifiche nello stesso gruppo di una già attiva
 
 ### Calcolo del prezzo
 
-`calculateTotal()` somma:
-
-- Prezzo base di ogni modifica (es. Flared = €15)
-- Prezzo delle opzioni selezionate nelle impostazioni (es. tessuto camo = €12 aggiuntivi)
+`calculateTotal()` somma il prezzo base di ogni modifica attiva:
 
 ```js
 function calculateTotal() {
-  let t = 0;
+  let t = s.basePrice || 0;
   for (const c of s.customizations) {
-    const def = findCustDef(s.garmentType, c.id);
+    const def = findCustDef(c.id);
     if (!def) continue;
-    t += def.price || 0; // prezzo base modifica
-    for (const setting of def.settings) {
-      // se è un select con prezzo, lo aggiunge
-      const opt = setting.options?.find(
-        (o) => o.id === c.settings[setting.key],
-      );
-      if (opt && opt.price) t += opt.price;
-    }
+    t += def.price || 0;
   }
   return t;
 }
@@ -988,7 +1066,7 @@ function calculateTotal() {
 
 1. Legge i campi del form dal DOM
 2. Valida: nome, cognome, email, accetta termini e privacy
-3. Prepara i dati
+3. Prepara i dati (incluse informazioni tessuto per ogni modifica)
 4. Chiama `send(data)` da `utils/formspree.js`
 5. Se successo: `s.submittedOk = true`, mostra schermata "Done"
 6. Se errore: mostra messaggio errore
@@ -1001,12 +1079,12 @@ function calculateTotal() {
 
 Tutti i dati sono **statici** — non c'è database, API o backend. I dati vivono in file JavaScript importati come moduli ES.
 
-| Tipo di dato          | Dove                              | Formato                                 |
-| --------------------- | --------------------------------- | --------------------------------------- |
-| Profili customizer    | `customizers/*/data.js`           | Oggetto JS esportato                    |
-| Profili venditori     | `sellers/*/data.js`               | Oggetto JS esportato                    |
-| Tipi capo             | `pages/configuratore.js` (inline) | Oggetto annidato                        |
-| Modifiche disponibili | `pages/configuratore.js` (inline) | Oggetto annidato con `group` e `models` |
+| Tipo di dato          | Dove                              | Formato                                              |
+| --------------------- | --------------------------------- | ---------------------------------------------------- |
+| Profili customizer    | `customizers/*/data.js`           | Oggetto JS esportato                                 |
+| Profili venditori     | `sellers/*/data.js`               | Oggetto JS esportato                                 |
+| Tipi capo             | `pages/configuratore.js` (inline) | Oggetto annidato per categoria                       |
+| Modifiche disponibili | `pages/configuratore.js` (inline) | Oggetto annidato con `group`, `needsFabric`, `image` |
 
 ### Come vengono importati
 
@@ -1039,8 +1117,11 @@ Per aggiungere un nuovo **venditore/seller**:
 Per aggiungere nuove **modifiche** nel configuratore:
 
 1. Aggiungi un oggetto all'array appropriato in `CUSTOMIZATIONS` in `pages/configuratore.js`
-2. Usa `models: [...]` per limitare la disponibilità a certi modelli
-3. Usa `group: "nome"` per rendere le modifiche mutuamente esclusive
+2. Usa `group: "nome"` per rendere le modifiche mutuamente esclusive
+3. Usa `needsFabric: true` se la modifica richiede selezione tessuto
+4. Usa `image: "path/immagine.jpg"` per mostrare un'foto esempio
+5. Per jeans, aggiungi a `CUSTOMIZATIONS.jeans._all`
+6. Per maglia/polo/camicia, aggiungi all'array del tipo specifico (es. `CUSTOMIZATIONS.maglia["manica-lunga"]`)
 
 ---
 
@@ -1171,35 +1252,101 @@ body {
    │ initConfiguratore() legge params.creator = "perassilorenzo"
    │ Badge mostra: "Customizer — Lorenzo Perassi"
    │
-   ├─ Step 1: "Do you already have a garment?"
+   ├─ Step 1: "Possiedi già il capo da personalizzare?"
    │   L'utente clicca "Sì" (ha un jeans)
    │
-   ├─ Step 2: Select your garment
-   │   Sceglie "Jeans", poi modello "Baggy"
-   │   Opzionale: marca "Levi's"
-   │   Clicca "Continue →"
+   ├─ Step 2: Scegli il tipo di capo
+   │   Sceglie "Jeans"
+   │   Clicca "Continua →"
    │
-   ├─ Step 3: Customize
-   │   Aggiunge modifica "Flared Bottom" (€15)
-   │     Imposta tessuto: "Camouflage" (+€12)
-   │   Aggiunge modifica "Raw Hem" (€5)
-   │     Imposta finish: "Frayed hem" (+€5)
+   ├─ Step 3: Scegli il modello
+   │   Sceglie "Baggy"
+   │   Opzionale: marca "Levi's"
+   │   Clicca "Continua →"
+   │
+   ├─ Step 4: Personalizza
+   │   Aggiunge "Togliere orlo (Raw Hem)" (+€5)
+   │   Aggiunge "Allargare il fondo" (+€15)
+   │     Seleziona tessuto: "Camo"
+   │   Aggiunge "Coprire buchi" (+€10)
+   │     Seleziona tessuto: "Denim"
    │
    │   Sidebar mostra riepilogo con prezzi
-   │   Clicca "Review Order →"
+   │   Clicca "Riepilogo →"
    │
-   ├─ Step 4: Review
-   │   Vede riepilogo completo
+   ├─ Step 5: Riepilogo
+   │   Vede riepilogo completo con tessuti
    │   Compila form: Nome, Cognome, Email
    │   Accetta termini e privacy
-   │   Clicca "Submit project"
+   │   Clicca "Invia progetto"
+   │
+   ▼
+6. DONE
+   │
+   │ "Richiesta inviata!"
+   │ Bottone "Nuovo progetto" → ricomincia
+```
+
+1. HOME PAGE
+   │
+   │ URL: /customly/
+   │ L'utente arriva sulla home. Vede hero, problemi, soluzione, visione.
+   │ Clicca "Scopri i customizer"
+   │
+   ▼
+2. LISTA CUSTOMIZER
+   │
+   │ URL: /customly/customizers
+   │ Router carica pages/creator.js → renderList()
+   │ Vede le card dei customizer
+   │ Clicca su Lorenzo Perassi
+   │
+   ▼
+3. PROFILO LORENZO PERASSI
+   │
+   │ URL: /customly/customizers/perassilorenzo
+   │ Router matcha route dinamica /customizers/:id
+   │ renderProfile(seller) genera HTML profilo
+   │ Clicca "Start customizing"
+   │
+   ▼
+4. CONFIGURATORE (con creator selezionato)
+   │
+   │ URL: /customly/configuratore?creator=perassilorenzo
+   │ Router carica pages/configuratore.js
+   │ initConfiguratore() legge params.creator = "perassilorenzo"
+   │ Badge mostra: "Customizer — Lorenzo Perassi"
+   │
+   ├─ Step 1: "Do you already have a garment?"
+   │ L'utente clicca "Sì" (ha un jeans)
+   │
+   ├─ Step 2: Select your garment
+   │ Sceglie "Jeans", poi modello "Baggy"
+   │ Opzionale: marca "Levi's"
+   │ Clicca "Continue →"
+   │
+   ├─ Step 3: Customize
+   │ Aggiunge modifica "Flared Bottom" (€15)
+   │ Imposta tessuto: "Camouflage" (+€12)
+   │ Aggiunge modifica "Raw Hem" (€5)
+   │ Imposta finish: "Frayed hem" (+€5)
+   │
+   │ Sidebar mostra riepilogo con prezzi
+   │ Clicca "Review Order →"
+   │
+   ├─ Step 4: Review
+   │ Vede riepilogo completo
+   │ Compila form: Nome, Cognome, Email
+   │ Accetta termini e privacy
+   │ Clicca "Submit project"
    │
    ▼
 5. DONE
    │
    │ "Request sent!"
    │ Bottone "New project" → ricomincia
-```
+
+````
 
 ---
 
@@ -1221,29 +1368,36 @@ Nessun altro file deve essere toccato. Il nuovo customizer appare subito su `/cu
 3. **MODIFICA** `components/navbar.js` — aggiungi link alla navbar
 4. **MODIFICA** `components/footer.js` — aggiungi link nel footer (opzionale)
 
-### Aggiungere una modifica al configuratore
+### Aggiungere una nuova modifica al configuratore
 
 1. **MODIFICA** `pages/configuratore.js` — aggiungi oggetto all'array appropriato in `CUSTOMIZATIONS`:
    ```js
-   jeans: [
+   // Per jeans (tutti i modelli):
+   CUSTOMIZATIONS.jeans._all = [
      {
        id: "nuova-modifica",
        label: "Nome Modifica",
        desc: "Descrizione della modifica",
        price: 10,
-       models: ["skinny", "baggy"], // opzionale: limita a certi modelli
        group: "nome-gruppo",        // opzionale: mutuamente esclusiva
-       settings: [ ... ]
+       image: "assets/modifications/path.jpg", // opzionale: foto esempio
+       needsFabric: false,           // true se richiede selezione tessuto
      },
+   ]
+
+   // Per maglia/polo/camicia (per tipo specifico):
+   CUSTOMIZATIONS.maglia["manica-lunga"] = [
+     { id: "nuova-modifica", label: "...", desc: "...", price: 10 },
    ]
    ```
 
 ### Aggiungere un nuovo tipo di capo (es. Felpa)
 
 1. **MODIFICA** `pages/configuratore.js`:
-   - Aggiungi entry a `GARMENT` con modelli
-   - Aggiungi array a `CUSTOMIZATIONS` con le modifiche disponibili
-   - Aggiorna `GARMENT_CATEGORIES`
+   - Aggiungi entry a `GARMENT_CATEGORIES` con id, label, desc
+   - Aggiungi a `GARMENT_TYPES` con i tipi disponibili (canotta, manica corta, manica lunga, ecc.)
+   - Aggiungi a `CUSTOMIZATIONS` con le modifiche per ogni tipo
+   - Le immagini vanno inserite in `assets/modifications/`
 
 ### Aggiungere un nuovo venditore/seller
 
@@ -1277,3 +1431,4 @@ Tutto in `styles/main.css`. Segui le variabili CSS esistenti e la sezione giusta
 | **Responsive**            | Il layout si adatta a schermi grandi e piccoli                     | Media query a 768px, 900px, 480px                             |
 | **IntersectionObserver**  | API browser per rilevare quando un elemento è visibile             | Animazione timeline in home.js                                |
 | **Design system**         | Insieme coerente di colori, font, spaziature                       | Variabili `:root` in main.css                                 |
+````

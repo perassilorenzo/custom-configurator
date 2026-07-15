@@ -37,8 +37,9 @@ Ordinare un capo personalizzato oggi significa messaggi infiniti su Instagram, v
 ### Per i Clienti
 
 - **Due modalit&agrave;**: configura un capo che gi&agrave; possiedi, o ordina da un customizer registrato
-- **Tipi di capo**: Shirt, jeans — con opzioni di personalizzazione specifiche per ogni tipo
-- **Modifiche**: canotta, crop, accorciamento, maniche, flared, side panels, raw hem, fondo allungato
+- **Categorie capo**: Maglia, Polo, Camicia, Jeans — ognuna con tipi specifici
+- **Tipi per categoria**: Canotta, Manica corta, Manica lunga (Maglia/Polo/Camicia) · Skinny, Regular, Baggy, Flared (Jeans)
+- **Modifiche strutturate**: Crop con orlo/taglio netto, Accorcia maniche, Trasforma in canotta, Raw Hem, Allargare fondo, Accorciare, Allargare vestibilità, Coprire buchi, Riparare tagli
 - **Calcolatore prezzi live**: prezzo base + sovrapprezzi si aggiornano durante la personalizzazione
 - **Invio diretto**: richiesta completa e strutturata inviata via email con tutti i dettagli
 
@@ -56,13 +57,35 @@ Ordinare un capo personalizzato oggi significa messaggi infiniti su Instagram, v
 
 ### Opzioni di Personalizzazione per Capo
 
-| Shirt                                            | Jeans                   |
-| ------------------------------------------------ | ----------------------- |
-| Canotta Taglio Netto (long-sleeve, short-sleeve) | Skinny / Flared / Baggy |
-| Corta Cucita Bene (long-sleeve)                  | Flared Bottom           |
-| Croppa Taglio Netto (tutti i modelli)            | Side Panels             |
-| Croppata Cucito Bene (tutti i modelli)           | Raw Hem                 |
-|                                                  | Fondo Allungato         |
+#### Maglia / Polo / Camicia
+
+| Modifica                              | Disponibilità     | Prezzo |
+| ------------------------------------- | ----------------- | ------ |
+| Crop con orlo                         | Tutti i tipi      | €10    |
+| Crop con taglio netto                 | Tutti i tipi      | €12    |
+| Accorcia maniche                      | Solo manica lunga | €8     |
+| Trasforma in canotta con taglio netto | Solo manica lunga | €12    |
+
+#### Jeans
+
+| Modifica                        | Gruppo | Prezzo |
+| ------------------------------- | ------ | ------ |
+| Togliere orlo (Raw Hem)         | Fondo  | €5     |
+| Allargare il fondo              | Fondo  | €15    |
+| Allargare il fondo dall'interno | Fondo  | €18    |
+| Accorciare con taglio netto     | —      | €8     |
+| Allargare vestibilità           | —      | €15    |
+| Coprire buchi                   | —      | €10    |
+| Riparare tagli                  | —      | €12    |
+
+#### Tessuti (per modifiche che lo richiedono)
+
+| Tessuto              | ID    |
+| -------------------- | ----- |
+| Jeans/Denim          | denim |
+| Camo                 | camo  |
+| Tuta                 | tuta  |
+| Altro (testo libero) | altro |
 
 ---
 
@@ -174,25 +197,27 @@ Aggiungere un nuovo customizer significa creare una directory con un file `data.
 
 ### Customizer Attuali
 
-| Customizer          | Stile                      | Specializzazione |
-| ------------------- | -------------------------- | ---------------- |
-| **Lorenzo Perassi** | Custom fashion / upcycling | Denim, Shirt     |
-| **Template**        | Profilo esempio            | Tutti i capi     |
+| Customizer          | Stile                      | Specializzazione             |
+| ------------------- | -------------------------- | ---------------------------- |
+| **Lorenzo Perassi** | Custom fashion / upcycling | Jeans, Maglia, Polo, Camicia |
+| **Template**        | Profilo esempio            | Tutti i capi                 |
 
 ---
 
 ## Roadmap
 
-- [x] MVP — configuratore interattivo con modifiche strutturate
+- [x] MVP — configuratore interattivo con flusso guidato per capi
 - [x] Sistema customizer con profili modulari
 - [x] Portfolio gallerie — popup immagini/video e viewer fullscreen
 - [x] SEO tecnica — meta tag dinamici, JSON-LD, sitemap, URL puliti
 - [x] GEO readiness — llms.txt, FAQ strutturate, dati leggibili da AI
 - [x] Accessibilit&agrave; — aria, focus management, reduced motion
+- [ ] Tessuti disponibili — espandere catalogo tessuti con più opzioni
+- [ ] Modifiche future — patch, ricami, stampe, bleach, cuciture
 - [ ] Customizer dashboard — gestione ordini in un unico posto
 - [ ] Pagine pubbliche customizer — link condivisibili per social media
 - [ ] Community — segui creator, condividi configurazioni
-- [ ] Marketplace — scopri nuovi artisti della personalizzazione
+- [ ] Marketplace — marketplace tessuti e materiali
 
 ---
 
