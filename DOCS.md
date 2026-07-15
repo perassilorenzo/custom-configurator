@@ -510,7 +510,15 @@ initNav(); // attacca eventi navbar
 | Funzione | Scopo |
 |---|---|
 | `renderProfile(seller)` | Genera HTML del profilo customizer (avatar, nome, bio, stili, esempi, contatti, CTA) |
-| `renderList()` | Genera HTML della griglia di tutti i customizer |
+| `renderList()` | Genera HTML della griglia di tutti i customizer + modulo waitlist |
+| `renderWaitlistForm()` | Genera HTML del modulo candidatura customizer (hero, come funziona, requisiti, FAQ, form) |
+
+**Waitlist form**:
+
+- Sezione "Diventa un Customizer" con hero, spiegazione, requisiti, linee guida, privacy, FAQ
+- Form con: informazioni personali, tipo di custom (checkbox), stile, link lavori, upload immagini
+- Accettazioni obbligatorie: correttezza, diritti, termini, privacy
+- Invio via `send()` di `utils/formspree.js`, conferma visiva post-submit
 
 **Template profilo**:
 

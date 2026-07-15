@@ -6,6 +6,7 @@ import {
   resetStatus,
   statusLabel,
 } from "../utils/product-status.js";
+import { send } from "../utils/formspree.js";
 
 function esc(s) {
   if (!s) return "";
@@ -610,6 +611,245 @@ function renderProfile(c) {
 
 /* ---- List page ---- */
 
+function renderWaitlistForm() {
+  return `
+    <div class="waitlist">
+      <section class="waitlist-hero">
+        <h2>Diventa un Customizer su Customly</h2>
+        <p>Porta il tuo stile nel mondo della custom fashion.</p>
+        <p class="waitlist-hero-desc">Customly &egrave; una piattaforma che mette in contatto clienti interessati alla personalizzazione di capi e customizer indipendenti che trasformano idee in pezzi unici. Stiamo costruendo la prima rete di customizer e stiamo raccogliendo professionisti, artigiani e creatori interessati a entrare nella piattaforma.</p>
+        <a href="#waitlist-form" class="cfg-btn cfg-btn-primary">Entra nella lista d'attesa</a>
+      </section>
+
+      <section class="waitlist-section">
+        <h3>Come funziona per i Customizer</h3>
+        <div class="waitlist-how-grid">
+          <div class="waitlist-how-card">
+            <span class="waitlist-step-num">01</span>
+            <h4>Crea il tuo spazio</h4>
+            <p>Ogni customizer avr&agrave; un profilo dedicato dove potr&agrave; mostrare:</p>
+            <ul>
+              <li>Presentazione personale</li>
+              <li>Bio e stile</li>
+              <li>Competenze</li>
+              <li>Tecniche utilizzate</li>
+              <li>Portfolio lavori</li>
+              <li>Catalogo pezzi disponibili</li>
+              <li>Recensioni dei clienti</li>
+            </ul>
+            <p class="waitlist-note">Il profilo sar&agrave; il tuo spazio digitale per presentare il tuo lavoro.</p>
+          </div>
+          <div class="waitlist-how-card">
+            <span class="waitlist-step-num">02</span>
+            <h4>Mostra quello che sai fare</h4>
+            <p>Potrai caricare i tuoi lavori passati e mostrare il tuo stile.</p>
+            <p>Esempi:</p>
+            <div class="waitlist-tags">
+              <span>Denim customization</span>
+              <span>Rework</span>
+              <span>Ricami</span>
+              <span>Patch</span>
+              <span>Stampe</span>
+              <span>Modifiche sartoriali</span>
+              <span>Streetwear custom</span>
+              <span>Handmade fashion</span>
+            </div>
+            <p class="waitlist-note">L'obiettivo &egrave; permettere ai clienti di trovare il customizer pi&ugrave; adatto al proprio stile.</p>
+          </div>
+          <div class="waitlist-how-card">
+            <span class="waitlist-step-num">03</span>
+            <h4>Ricevi richieste organizzate</h4>
+            <p>I clienti potranno configurare il proprio progetto attraverso il configuratore Customly. La richiesta arriver&agrave; con informazioni come:</p>
+            <ul>
+              <li>Tipo di capo</li>
+              <li>Modello</li>
+              <li>Modifiche richieste</li>
+              <li>Preferenze</li>
+              <li>Note personali</li>
+              <li>Contatti del cliente</li>
+            </ul>
+            <p class="waitlist-note">In questo modo eviti conversazioni confuse e ricevi richieste pi&ugrave; chiare.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="waitlist-section waitlist-bg">
+        <h3>Come funziona una richiesta cliente</h3>
+        <p class="waitlist-subtitle">Dal progetto alla realizzazione</p>
+        <ol class="waitlist-flow">
+          <li>Il cliente crea il progetto tramite Customly.</li>
+          <li>La richiesta viene inviata al customizer interessato.</li>
+          <li>Il customizer valuta: fattibilit&agrave;, tempi, prezzo finale.</li>
+          <li>Cliente e customizer definiscono direttamente i dettagli.</li>
+          <li>Il lavoro viene realizzato dal customizer.</li>
+        </ol>
+      </section>
+
+      <section class="waitlist-section">
+        <h3>Pagamenti e commissioni</h3>
+        <div class="waitlist-cards">
+          <div class="waitlist-card">
+            <h4>Situazione attuale (fase iniziale)</h4>
+            <p>Durante la fase iniziale di Customly la piattaforma non gestisce pagamenti e non trattiene commissioni sulle vendite. Il rapporto economico avviene direttamente tra cliente e customizer. Customly si occupa solamente di facilitare il contatto e organizzare la richiesta.</p>
+          </div>
+          <div class="waitlist-card">
+            <h4>Futuro della piattaforma</h4>
+            <p>In futuro potrebbero essere introdotti strumenti aggiuntivi per i customizer, come profili avanzati, maggiore visibilit&agrave;, strumenti di gestione e servizi premium tramite abbonamento. Eventuali modifiche saranno comunicate con anticipo.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="waitlist-section waitlist-bg">
+        <h3>Requisiti per diventare Customizer</h3>
+        <p>Per entrare nella piattaforma &egrave; necessario:</p>
+        <ul class="waitlist-checklist">
+          <li>Realizzare lavori di personalizzazione moda o avere competenze rilevanti.</li>
+          <li>Possedere immagini proprie dei lavori realizzati.</li>
+          <li>Presentare informazioni veritiere sul proprio lavoro.</li>
+          <li>Rispettare clienti, altri creator e la piattaforma.</li>
+          <li>Non pubblicare contenuti o lavori appartenenti ad altre persone senza autorizzazione.</li>
+        </ul>
+      </section>
+
+      <section class="waitlist-section">
+        <h3>Linee guida Customizer</h3>
+        <p>Accettando di entrare nella lista d'attesa confermi che:</p>
+        <div class="waitlist-cards">
+          <div class="waitlist-card">
+            <h4>Contenuti caricati</h4>
+            <p>Sei responsabile dei contenuti che fornisci. Le immagini, descrizioni e informazioni inserite devono essere: create da te; oppure utilizzate con autorizzazione. Customly pu&ograve; rimuovere contenuti che violano diritti di terzi.</p>
+          </div>
+          <div class="waitlist-card">
+            <h4>Qualit&agrave; del servizio</h4>
+            <p>Il customizer &egrave; responsabile: della qualit&agrave; del proprio lavoro; dei tempi concordati; della comunicazione con il cliente; degli accordi economici presi. Customly non realizza direttamente i prodotti e non &egrave; responsabile della lavorazione effettuata dai singoli customizer.</p>
+          </div>
+          <div class="waitlist-card">
+            <h4>Uso della piattaforma</h4>
+            <p>Customly pu&ograve;: rifiutare richieste di ingresso; rimuovere profili; sospendere utenti che non rispettano le regole.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="waitlist-section waitlist-bg">
+        <h3>Privacy</h3>
+        <h4>Come utilizziamo i tuoi dati</h4>
+        <p>I dati raccolti nel form vengono utilizzati per:</p>
+        <ul>
+          <li>Valutare la candidatura;</li>
+          <li>Contattarti quando Customly sar&agrave; disponibile per nuovi customizer;</li>
+          <li>Comunicare aggiornamenti sul progetto.</li>
+        </ul>
+        <p class="waitlist-note">Non utilizziamo i dati per finalit&agrave; diverse da quelle indicate.</p>
+      </section>
+
+      <section class="waitlist-section">
+        <h3>FAQ</h3>
+        <div class="faq-list">
+          <div class="faq-item" data-faq>
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Chi pu&ograve; diventare un customizer?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>Chiunque abbia competenze nella personalizzazione di capi, dalla sartoria al rework creativo, fino alla custom fashion.</p>
+            </div>
+          </div>
+          <div class="faq-item" data-faq>
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Devo pagare per entrare?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>No. Durante la fase iniziale l'accesso alla lista d'attesa &egrave; gratuito.</p>
+            </div>
+          </div>
+          <div class="faq-item" data-faq>
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Customly vende i miei prodotti?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>No. Customly mette in contatto clienti e customizer. La realizzazione e la vendita vengono gestite direttamente dal customizer.</p>
+            </div>
+          </div>
+          <div class="faq-item" data-faq>
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Customly prende una percentuale?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>Attualmente no. Eventuali servizi futuri a pagamento saranno separati e comunicati prima dell'introduzione.</p>
+            </div>
+          </div>
+          <div class="faq-item" data-faq>
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Devo avere una partita IVA?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>La gestione fiscale e degli aspetti legali dell'attivit&agrave; rimane responsabilit&agrave; del singolo customizer. Customly non sostituisce consulenti fiscali o legali.</p>
+            </div>
+          </div>
+          <div class="faq-item" data-faq>
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Posso decidere quali lavori accettare?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>S&igrave;. Il customizer decide autonomamente quali richieste accettare.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="waitlist-section waitlist-form-section" id="waitlist-form">
+        <h3>Form candidatura</h3>
+        <form class="waitlist-form" data-waitlist-form>
+          <div class="waitlist-form-group">
+            <h4>Informazioni personali</h4>
+            <div class="waitlist-form-row">
+              <input type="text" name="nome" class="cfg-input" placeholder="Nome" required>
+              <input type="text" name="cognome" class="cfg-input" placeholder="Cognome" required>
+            </div>
+            <input type="text" name="brand" class="cfg-input" placeholder="Nome brand (se presente)">
+            <input type="email" name="email" class="cfg-input" placeholder="Email" required>
+            <input type="text" name="social" class="cfg-input" placeholder="Instagram / TikTok / Portfolio" required>
+            <input type="text" name="localita" class="cfg-input" placeholder="Localit&agrave;" required>
+          </div>
+
+          <div class="waitlist-form-group">
+            <h4>Informazioni sul lavoro</h4>
+            <label class="waitlist-form-label">Che tipo di custom realizzi?</label>
+            <div class="waitlist-checkbox-grid">
+              <label class="waitlist-checkbox"><input type="checkbox" name="tipo_denim" value="Denim customization"><span>Denim customization</span></label>
+              <label class="waitlist-checkbox"><input type="checkbox" name="tipo_rework" value="Rework"><span>Rework</span></label>
+              <label class="waitlist-checkbox"><input type="checkbox" name="tipo_ricami" value="Ricami"><span>Ricami</span></label>
+              <label class="waitlist-checkbox"><input type="checkbox" name="tipo_patch" value="Patch"><span>Patch</span></label>
+              <label class="waitlist-checkbox"><input type="checkbox" name="tipo_stampe" value="Stampe"><span>Stampe</span></label>
+              <label class="waitlist-checkbox"><input type="checkbox" name="tipo_sartoria" value="Sartoria"><span>Sartoria</span></label>
+              <label class="waitlist-checkbox"><input type="checkbox" name="tipo_streetwear" value="Streetwear"><span>Streetwear</span></label>
+              <label class="waitlist-checkbox"><input type="checkbox" name="tipo_altro" value="Altro"><span>Altro</span></label>
+            </div>
+            <textarea name="stile" class="cfg-textarea" placeholder="Raccontaci il tuo stile" rows="3" required></textarea>
+            <input type="url" name="lavori_link" class="cfg-input" placeholder="Link ai tuoi lavori (Instagram / sito / portfolio)" required>
+            <label class="waitlist-form-label">Carica alcuni esempi dei tuoi lavori</label>
+            <input type="file" name="lavori_files" class="waitlist-file-input" multiple accept="image/*">
+          </div>
+
+          <div class="waitlist-form-group">
+            <h4>Accettazioni obbligatorie</h4>
+            <label class="waitlist-checkbox"><input type="checkbox" name="accetto_correttezza" required><span>Confermo che le informazioni inserite sono corrette.</span></label>
+            <label class="waitlist-checkbox"><input type="checkbox" name="accetto_diritti" required><span>Confermo di possedere i diritti sulle immagini e sui contenuti inviati.</span></label>
+            <label class="waitlist-checkbox"><input type="checkbox" name="accetto_termini" required><span>Accetto i <a href="/termini" target="_blank">Termini e condizioni</a> della piattaforma.</span></label>
+            <label class="waitlist-checkbox"><input type="checkbox" name="accetto_privacy" required><span>Accetto la <a href="/privacy" target="_blank">Privacy Policy</a>.</span></label>
+          </div>
+
+          <button type="submit" class="cfg-btn cfg-btn-primary waitlist-submit">Invia candidatura</button>
+        </form>
+      </section>
+    </div>`;
+}
+
 function renderList() {
   const all = getAllCustomizers();
   const opts = collectFilterOptions(all);
@@ -625,7 +865,7 @@ function renderList() {
           <p>Find your customizer and start creating something unique.</p>
         </div>
         <div class="creator-list-search">
-          <input class="creator-list-search-input" data-search-input type="text" placeholder="Cerca un customizer per nome, città, stile o competenza..." autocomplete="off">
+          <input class="creator-list-search-input" data-search-input type="text" placeholder="Cerca un customizer per nome, citt&agrave;, stile o competenza..." autocomplete="off">
         </div>
         <div class="creator-list-toolbar">
           <button class="creator-filter-toggle" data-toggle-filters>
@@ -645,6 +885,11 @@ function renderList() {
           <h3>No customizer found</h3>
           <p>Try changing your search or filters.</p>
         </div>
+      </div>
+    </div>
+    <div class="waitlist-full">
+      <div class="container">
+        ${renderWaitlistForm()}
       </div>
     </div>
     ${renderFilterPanel(opts, _listState.filters)}
@@ -1349,6 +1594,38 @@ export function initCreator() {
         }
       }
     }
+    /* Waitlist form */
+    if (e.target.closest("[data-waitlist-form]")) {
+      e.preventDefault();
+      const form = e.target.closest("[data-waitlist-form]");
+      const data = new FormData(form);
+      const obj = Object.fromEntries(data.entries());
+      obj.type = "waitlist";
+      obj.tipi_custom = [];
+      form
+        .querySelectorAll('input[type="checkbox"][name^="tipo_"]:checked')
+        .forEach((cb) => {
+          obj.tipi_custom.push(cb.value);
+        });
+      delete obj.tipo_denim;
+      delete obj.tipo_rework;
+      delete obj.tipo_ricami;
+      delete obj.tipo_patch;
+      delete obj.tipo_stampe;
+      delete obj.tipo_sartoria;
+      delete obj.tipo_streetwear;
+      delete obj.tipo_altro;
+
+      send(obj).catch(() => {});
+
+      form.innerHTML = `
+        <div style="text-align:center;padding:48px 24px">
+          <div style="font-size:48px;margin-bottom:16px">&#10003;</div>
+          <h3>Candidatura inviata!</h3>
+          <p style="color:var(--text-secondary);margin:12px 0 24px">Grazie per il tuo interesse. Ti contatteremo quando Customly sar&agrave; disponibile per nuovi customizer.</p>
+        </div>
+      `;
+    }
   });
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-scroll]");
@@ -1369,6 +1646,15 @@ export function initCreator() {
       applyListFilter();
     });
   }
+
+  /* FAQ accordion */
+  document.querySelectorAll("[data-faq] .faq-question").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const expanded = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!expanded));
+      btn.closest(".faq-item")?.classList.toggle("open");
+    });
+  });
 
   /* Precompute filter options */
   _filterOpts = collectFilterOptions(getAllCustomizers());
