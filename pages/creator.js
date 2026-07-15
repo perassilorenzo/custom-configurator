@@ -701,45 +701,18 @@ function renderWaitlistForm() {
 
       <section class="waitlist-section waitlist-bg">
         <h3>Requisiti e fiducia</h3>
-        <p>Per entrare nella piattaforma &egrave; necessario:</p>
-        <ul class="waitlist-checklist">
-          <li>Realizzare lavori di personalizzazione moda o avere competenze rilevanti.</li>
-          <li>Possedere immagini proprie dei lavori realizzati.</li>
-          <li>Presentare informazioni veritiere sul proprio lavoro.</li>
-          <li>Rispettare clienti, altri creator e la piattaforma.</li>
-          <li>Non pubblicare contenuti o lavori appartenenti ad altre persone senza autorizzazione.</li>
-        </ul>
+        <p>Per entrare nella piattaforma &egrave; necessario dimostrare competenze nella personalizzazione di capi, possedere immagini dei propri lavori e presentare informazioni veritiere. <button type="button" class="waitlist-link" data-waitlist-popup="requisiti">Scopri tutti i requisiti &rarr;</button></p>
       </section>
 
       <section class="waitlist-section">
-        <h3>Linee guida Customizer</h3>
-        <p>Accettando di entrare nella lista d'attesa confermi che:</p>
-        <div class="waitlist-cards">
-          <div class="waitlist-card">
-            <h4>Contenuti caricati</h4>
-            <p>Sei responsabile dei contenuti che fornisci. Le immagini, descrizioni e informazioni inserite devono essere: create da te; oppure utilizzate con autorizzazione. Customly pu&ograve; rimuovere contenuti che violano diritti di terzi.</p>
-          </div>
-          <div class="waitlist-card">
-            <h4>Qualit&agrave; del servizio</h4>
-            <p>Il customizer &egrave; responsabile: della qualit&agrave; del proprio lavoro; dei tempi concordati; della comunicazione con il cliente; degli accordi economici presi. Customly non realizza direttamente i prodotti e non &egrave; responsabile della lavorazione effettuata dai singoli customizer.</p>
-          </div>
-          <div class="waitlist-card">
-            <h4>Uso della piattaforma</h4>
-            <p>Customly pu&ograve;: rifiutare richieste di ingresso; rimuovere profili; sospendere utenti che non rispettano le regole.</p>
-          </div>
-        </div>
+        <h3>Linee guida e responsabilit&agrave;</h3>
+        <p>Accettando di candidarti confermi di essere responsabile dei tuoi contenuti, della qualit&agrave; del lavoro e degli accordi con i clienti. <button type="button" class="waitlist-link" data-waitlist-popup="linee-guida">Leggi le linee guida complete &rarr;</button></p>
+        <p>Customly non realizza prodotti e non &egrave; responsabile della lavorazione dei singoli customizer. La piattaforma si riserva di rifiutare ingressi, rimuovere profili e sospendere utenti che non rispettano le regole.</p>
       </section>
 
       <section class="waitlist-section waitlist-bg">
-        <h3>Privacy</h3>
-        <h4>Come utilizziamo i tuoi dati</h4>
-        <p>I dati raccolti nel form vengono utilizzati per:</p>
-        <ul>
-          <li>Valutare la candidatura;</li>
-          <li>Contattarti quando Customly sar&agrave; disponibile per nuovi customizer;</li>
-          <li>Comunicare aggiornamenti sul progetto.</li>
-        </ul>
-        <p class="waitlist-note">Non utilizziamo i dati per finalit&agrave; diverse da quelle indicate.</p>
+        <h3>Privacy e dati</h3>
+        <p>I dati del form vengono utilizzati solo per valutare la candidatura, contattarvi quando Customly sar&agrave; disponibile e comunicare aggiornamenti. <button type="button" class="waitlist-link" data-waitlist-popup="privacy">Leggi l'informativa completa &rarr;</button></p>
       </section>
 
       <section class="waitlist-section">
@@ -841,13 +814,20 @@ function renderWaitlistForm() {
             <h4>Accettazioni obbligatorie</h4>
             <label class="waitlist-checkbox"><input type="checkbox" name="accetto_correttezza" required><span>Confermo che le informazioni inserite sono corrette.</span></label>
             <label class="waitlist-checkbox"><input type="checkbox" name="accetto_diritti" required><span>Confermo di possedere i diritti sulle immagini e sui contenuti inviati.</span></label>
-            <label class="waitlist-checkbox"><input type="checkbox" name="accetto_termini" required><span>Accetto i <a href="/termini" target="_blank">Termini e condizioni</a> della piattaforma.</span></label>
-            <label class="waitlist-checkbox"><input type="checkbox" name="accetto_privacy" required><span>Accetto la <a href="/privacy" target="_blank">Privacy Policy</a>.</span></label>
+            <label class="waitlist-checkbox"><input type="checkbox" name="accetto_termini" required><span>Accetto i <button type="button" class="waitlist-link-inline" data-waitlist-popup="termini">Termini e condizioni</button> della piattaforma.</span></label>
+            <label class="waitlist-checkbox"><input type="checkbox" name="accetto_privacy" required><span>Accetto la <button type="button" class="waitlist-link-inline" data-waitlist-popup="privacy-form">Privacy Policy</button>.</span></label>
           </div>
 
           <button type="submit" class="cfg-btn cfg-btn-primary waitlist-submit">Entra nella lista dei primi Customizer</button>
         </form>
       </section>
+    </div>
+
+    <div class="waitlist-popup-overlay" data-waitlist-popup-overlay style="display:none">
+      <div class="waitlist-popup">
+        <button class="waitlist-popup-close" data-waitlist-popup-close>&times;</button>
+        <div class="waitlist-popup-content" data-waitlist-popup-content></div>
+      </div>
     </div>`;
 }
 
@@ -1670,6 +1650,113 @@ export function initCreator() {
         item?.classList.toggle("open");
       });
     });
+
+  /* Waitlist popups */
+  const popupContent = {
+    requisiti: `
+      <h3>Requisiti per diventare Customizer</h3>
+      <p>Per entrare nella piattaforma &egrave; necessario:</p>
+      <ul class="waitlist-checklist">
+        <li>Realizzare lavori di personalizzazione moda o avere competenze rilevanti.</li>
+        <li>Possedere immagini proprie dei lavori realizzati.</li>
+        <li>Presentare informazioni veritiere sul proprio lavoro.</li>
+        <li>Rispettare clienti, altri creator e la piattaforma.</li>
+        <li>Non pubblicare contenuti o lavori appartenenti ad altre persone senza autorizzazione.</li>
+      </ul>
+      <p class="waitlist-note">Customly seleziona manualmente i primi creator in base alla qualit&agrave; del lavoro e alla coerenza con lo stile della piattaforma.</p>
+    `,
+    "linee-guida": `
+      <h3>Linee guida Customizer</h3>
+      <p>Accettando di entrare nella lista d'attesa confermi che:</p>
+      <h4>Contenuti caricati</h4>
+      <p>Sei responsabile dei contenuti che fornisci. Le immagini, descrizioni e informazioni inserite devono essere: create da te; oppure utilizzate con autorizzazione. Customly pu&ograve; rimuovere contenuti che violano diritti di terzi.</p>
+      <h4>Qualit&agrave; del servizio</h4>
+      <p>Il customizer &egrave; responsabile: della qualit&agrave; del proprio lavoro; dei tempi concordati; della comunicazione con il cliente; degli accordi economici presi. Customly non realizza direttamente i prodotti e non &egrave; responsabile della lavorazione effettuata dai singoli customizer.</p>
+      <h4>Uso della piattaforma</h4>
+      <p>Customly pu&ograve;: rifiutare richieste di ingresso; rimuovere profili; sospendere utenti che non rispettano le regole.</p>
+    `,
+    privacy: `
+      <h3>Informativa sulla Privacy</h3>
+      <h4>Come utilizziamo i tuoi dati</h4>
+      <p>I dati raccolti nel form di candidatura vengono utilizzati per:</p>
+      <ul>
+        <li>Valutare la candidatura e selezionare i primi customizer;</li>
+        <li>Contattarti quando Customly sar&agrave; disponibile per nuovi customizer;</li>
+        <li>Comunicare aggiornamenti sul progetto e sulla piattaforma.</li>
+      </ul>
+      <p>I dati non verranno utilizzati per finalit&agrave; diverse da quelle indicate. Non condividiamo i tuoi dati con terzi per scopi commerciali.</p>
+      <p>Puoi richiedere la cancellazione dei tuoi dati in qualsiasi momento contattandoci.</p>
+    `,
+    termini: `
+      <h3>Termini e Condizioni</h3>
+      <h4>1. Accettazione</h4>
+      <p>Compilando il form di candidatura accetti i presenti termini e condizioni. Se non sei d'accordo con uno dei punti, non compilare il form.</p>
+      <h4>2. Candidatura</h4>
+      <p>La candidatura non garantisce l'ingresso nella piattaforma. Customly si riserva il diritto di selezionare i creator in base a criteri di qualit&agrave; e coerenza con il progetto.</p>
+      <h4>3. Profilo vetrina</h4>
+      <p>I primi profili vetrina saranno creati manualmente dal team Customly. Il customizer sar&agrave; coinvolto nella creazione del profilo e dovr&agrave; approvarne il contenuto prima della pubblicazione.</p>
+      <h4>4. Contenuti</h4>
+      <p>Il customizer &egrave; responsabile dei contenuti che fornisce. Le immagini e le descrizioni devono essere originali o utilizzate con autorizzazione.</p>
+      <h4>5. Rapporto economico</h4>
+      <p>Nella fase iniziale Customly non gestisce pagamenti e non trattiene commissioni. Il rapporto economico avviene direttamente tra cliente e customizer.</p>
+      <h4>6. Modifiche</h4>
+      <p>Customly si riserva il diritto di modificare i presenti termini. Eventuali modifiche saranno comunicate con anticipo.</p>
+    `,
+    "privacy-form": `
+      <h3>Privacy Policy</h3>
+      <h4>Titolare del trattamento</h4>
+      <p>Customly (customly.com)</p>
+      <h4>Dati raccolti</h4>
+      <p>Nel form di candidatura raccogliamo: nome, cognome, email, localit&agrave;, link a profili social, descrizione del lavoro e immagini caricate.</p>
+      <h4>Finalit&agrave; del trattamento</h4>
+      <ul>
+        <li>Valutare la candidatura per l'ingresso nella piattaforma;</li>
+        <li>Contattarti per comunicazioni relative al progetto;</li>
+        <li>Inviare aggiornamenti su Customly.</li>
+      </ul>
+      <h4>Base giuridica</h4>
+      <p>Il trattamento si basa sul consenso dell'interessato, fornito tramite compilazione del form.</p>
+      <h4>Conservazione</h4>
+      <p>I dati saranno conservati fino a richiesta di cancellazione da parte dell'interessato.</p>
+      <h4>Diritti dell'interessato</h4>
+      <p>Hai diritto di: accedere ai tuoi dati, rettificarli, cancellarli, opporti al trattamento, richiedere la portabilit&agrave; dei dati. Per esercitare i tuoi diritti contattaci.</p>
+    `,
+  };
+
+  document.addEventListener("click", (e) => {
+    const popupBtn = e.target.closest("[data-waitlist-popup]");
+    if (popupBtn) {
+      const key = popupBtn.dataset.waitlistPopup;
+      const content = popupContent[key];
+      if (!content) return;
+      const overlay = document.querySelector("[data-waitlist-popup-overlay]");
+      const contentEl = document.querySelector("[data-waitlist-popup-content]");
+      if (overlay && contentEl) {
+        contentEl.innerHTML = content;
+        overlay.style.display = "";
+      }
+    }
+    if (e.target.closest("[data-waitlist-popup-close]")) {
+      const overlay = document.querySelector("[data-waitlist-popup-overlay]");
+      if (overlay) overlay.style.display = "none";
+    }
+    if (
+      e.target.closest("[data-waitlist-popup-overlay]") &&
+      !e.target.closest(".waitlist-popup")
+    ) {
+      const overlay = document.querySelector("[data-waitlist-popup-overlay]");
+      if (overlay) overlay.style.display = "none";
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const overlay = document.querySelector("[data-waitlist-popup-overlay]");
+      if (overlay && overlay.style.display !== "none") {
+        overlay.style.display = "none";
+      }
+    }
+  });
 
   /* Precompute filter options */
   _filterOpts = collectFilterOptions(getAllCustomizers());
