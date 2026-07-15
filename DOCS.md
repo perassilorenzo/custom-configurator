@@ -370,6 +370,10 @@ Cio significa: ogni pagina viene automaticamente incorniciata da navbar e footer
 ```js
 init(document.getElementById("app")); // avvia il router
 initNav(); // attacca eventi navbar
+afterRender(() => {
+  reinitNav();
+  initFooter();
+}); // post-render: sync tema + easter egg footer
 ```
 
 ---
@@ -442,6 +446,7 @@ initNav(); // attacca eventi navbar
 |---|---|
 | `renderNav()` | Genera HTML della navbar |
 | `initNav()` | Attacca event listener (toggle mobile, logo → home, chiudi menu su click link) |
+| `reinitNav()` | Sincronizza icona tema after render |
 
 **Struttura HTML generata**:
 
@@ -450,28 +455,34 @@ initNav(); // attacca eventi navbar
   <div class="container">
     <a class="nav-logo">Custom<span>ly</span></a>
     <div class="nav-links" id="nav-links">
-      <a href="#/">Home</a>
-      <a href="#/configuratore">Configuratore</a>
-      <a href="#/customizers">Customizers</a>
-      <a href="#/contatti">Contatti</a>
+      <a href="/">Home</a>
+      <a href="/configuratore">Configuratore</a>
+      <a href="/customizers">Customizers</a>
+      <a href="/contatti">Contatti</a>
     </div>
-    <button class="mobile-toggle">☰</button>
+    <button class="theme-btn">...</button>
+    <button class="mobile-toggle"><span></span></button>
   </div>
 </nav>
 ```
+
+**Mobile toggle**: Il pulsante hamburger usa un `<span>` con pseudo-elementi CSS che si animano in una X quando il menu è aperto (`aria-expanded="true"`).
 
 ---
 
 ## 6.6 `components/footer.js`
 
-**Scopo**: Footer del sito, presente su ogni pagina.
+**Scopo**: Footer del sito, presente su ogni pagina. Include un easter egg con citazioni da "The Social Network".
 
 **Esporta**:
 | Funzione | Scopo |
 |---|---|
-| `renderFooter()` | Genera HTML del footer |
+| `renderFooter()` | Genera HTML del footer (con `data-footer-easter` sul testo production) |
+| `initFooter()` | Attacca hover event sul footer production per tooltip con citazioni |
 
-**Sezioni**: Brand + descrizione, Naviga (link), Social (placeholder), Info (contatti, privacy, termini).
+**Easter egg**: Il testo "A Lorenzo Perassi Production" nel footer ha un hover tooltip con citazioni dal film "The Social Network". Primi 3 hover mostrano "Zuckerberg? Sounds Irish.", dal 4° in poi "Drop the The. Just Facebook.".
+
+**Sezioni**: Brand + descrizione, Naviga (link), Social (placeholder), Info (contatti, privacy, termini), Production (easter egg).
 
 ---
 
@@ -490,9 +501,11 @@ initNav(); // attacca eventi navbar
 1. **Hero**: schermo intero, frase "Your vision. Your style. Make it yours.", 3 bottoni
 2. **Il problema**: 5 punti elenco, 2 card (per chi compra / per chi crea)
 3. **La soluzione**: timeline animata a 4 step
-4. **FAQ**: domande frequenti con sfondo alternato
-5. **La visione**: 4 card sulla visione del progetto
-6. **About + Roadmap**: chi ha creato Customly, roadmap in 3 tappe
+4. **Perché Customly**: 4 feature card sulla visione
+5. **FAQ**: domande frequenti con accordion (click apre, riclicca chiude, un item alla volta)
+6. **About + Roadmap**: chi ha creato Customly (prima su mobile), roadmap in 3 tappe
+
+**Responsive mobile**: Su schermi <768px la sezione About usa `flex-direction: column-reverse` per mostrare la Roadmap prima e lo sviluppatore dopo. I social link "Seguimi" diventano righe orizzontali.
 
 ---
 
@@ -512,6 +525,7 @@ initNav(); // attacca eventi navbar
 | `renderProfile(seller)` | Genera HTML del profilo customizer (avatar, nome, bio, stili, esempi, contatti, CTA) |
 | `renderList()` | Genera HTML della griglia di tutti i customizer + modulo waitlist |
 | `renderWaitlistForm()` | Genera HTML del modulo candidatura customizer (hero, come funziona, requisiti, FAQ, form) |
+| `renderListItem(c)` | Genera singola card customizer nella lista discover |
 
 **Waitlist form**:
 
@@ -519,6 +533,8 @@ initNav(); // attacca eventi navbar
 - Form con: informazioni personali, tipo di custom (checkbox), stile, link lavori, upload immagini
 - Accettazioni obbligatorie: correttezza, diritti, termini, privacy
 - Invio via `send()` di `utils/formspree.js`, conferma visiva post-submit
+- Popup overlay per dettagli requisiti, linee guida, privacy, termini
+- Come-funziona per customizer: su mobile le 3 card diventano accordion (click per espandere)
 
 **Template profilo**:
 
@@ -688,10 +704,12 @@ initNav(); // attacca eventi navbar
 **Esporta**:
 | Funzione | Scopo |
 |---|---|
-| `renderContatti()` | Genera HTML (form + canali) |
+| `renderContatti()` | Genera HTML (form + canali informativi) |
 | `initContatti()` | Attacca submit form e validazione |
 
 **Campi form**: Nome, Email, Oggetto (select), Messaggio. Invia a Formspree con tipo "contatto".
+
+**Canali**: I canali social (Instagram, GitHub, LinkedIn, Email) sono mostrati come card informative senza link cliccabili. Su mobile sono disabilitati via `pointer-events: none`.
 
 ---
 
@@ -1192,7 +1210,7 @@ Le sezioni sono in ordine di apparizione nel layout:
 
 Breakpoint usati:
 
-- **768px**: Nav → hamburger, footer 2 colonne, timeline single-column
+- **768px**: Nav → hamburger animato (span → X), footer 1 colonna, timeline single-column, about-inline inverte ordine (roadmap prima), social tags orizzontali, card customizer centrata e singola colonna, waitlist how-cards accordion, contact channels no-link, filters inline con search
 - **900px**: Configuratore → layout singola colonna
 - **960px**: Configuratore v2 → singola colonna
 - **1024px**: Timeline card più strette
