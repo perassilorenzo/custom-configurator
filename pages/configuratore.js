@@ -2,178 +2,344 @@ import { send } from "../utils/formspree.js";
 import { getParams, navigate } from "../utils/router.js";
 import { getCustomizer } from "../data/customizers.js";
 
-const GARMENT = {
-  tshirt: {
-    label: "Shirt",
-    models: [
-      { id: "short-sleeve", label: "Short Sleeve" },
-      { id: "long-sleeve", label: "Long Sleeve" },
-      { id: "tank-top", label: "Tank Top" },
-    ],
-  },
-  jeans: {
-    label: "Jeans",
-    models: [
-      { id: "skinny", label: "Skinny" },
-      { id: "flared", label: "Flared" },
-      { id: "baggy", label: "Baggy" },
-    ],
-  },
+const GARMENT_CATEGORIES = [
+  { id: "maglia", label: "Maglia", desc: "Il capo base per eccellenza" },
+  { id: "polo", label: "Polo", desc: "Eleganza e personalizzazione" },
+  { id: "camicia", label: "Camicia", desc: "Stile classico da trasformare" },
+  { id: "jeans", label: "Jeans", desc: "Denim come tela per il tuo stile" },
+];
+
+const GARMENT_TYPES = {
+  maglia: [
+    { id: "canotta", label: "Canotta" },
+    { id: "manica-corta", label: "Manica corta" },
+    { id: "manica-lunga", label: "Manica lunga" },
+  ],
+  polo: [
+    { id: "canotta", label: "Canotta" },
+    { id: "manica-corta", label: "Manica corta" },
+    { id: "manica-lunga", label: "Manica lunga" },
+  ],
+  camicia: [
+    { id: "canotta", label: "Canotta" },
+    { id: "manica-corta", label: "Manica corta" },
+    { id: "manica-lunga", label: "Manica lunga" },
+  ],
 };
 
-const GARMENT_CATEGORIES = [
-  {
-    id: "tshirt",
-    label: "Shirt",
-    desc: "Classic, versatile, ready for customization",
-  },
-  {
-    id: "jeans",
-    label: "Jeans",
-    desc: "Denim canvas for your unique style",
-  },
+const JEANS_MODELS = [
+  { id: "skinny", label: "Skinny" },
+  { id: "regular", label: "Regular" },
+  { id: "baggy", label: "Baggy" },
+  { id: "flared", label: "Flared" },
 ];
 
 const CUSTOMIZATIONS = {
-  jeans: [
-    {
-      id: "flared",
-      label: "Flared Bottom",
-      desc: "Triangular fabric panels to create a flared silhouette.",
-      price: 15,
-      settings: [
-        {
-          key: "fabricAvailable",
-          label: "Fabric available?",
-          type: "boolean",
-          default: true,
-        },
-        {
-          key: "fabric",
-          label: "Choose fabric",
-          type: "select",
-          default: "denim",
-          dependsOn: { key: "fabricAvailable", value: false },
-          options: [
-            { id: "denim", label: "Denim", price: 8 },
-            { id: "tuta", label: "Sweatpants fabric", price: 10 },
-            { id: "camo", label: "Camouflage", price: 12 },
-          ],
-        },
-        {
-          key: "size",
-          label: "Size",
-          type: "select",
-          default: "medium",
-          options: [
-            { id: "small", label: "Small" },
-            { id: "medium", label: "Medium" },
-            { id: "large", label: "Large" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "side-panels",
-      label: "Side Panels",
-      desc: "Widen the jeans from ankle to pocket with fabric inserts.",
-      price: 18,
-      settings: [
-        {
-          key: "fabricAvailable",
-          label: "Fabric available?",
-          type: "boolean",
-          default: true,
-        },
-        {
-          key: "fabric",
-          label: "Choose fabric",
-          type: "select",
-          default: "denim",
-          dependsOn: { key: "fabricAvailable", value: false },
-          options: [
-            { id: "denim", label: "Denim", price: 8 },
-            { id: "tuta", label: "Sweatpants fabric", price: 10 },
-            { id: "camo", label: "Camouflage", price: 12 },
-          ],
-        },
-        {
-          key: "size",
-          label: "Size",
-          type: "select",
-          default: "medium",
-          options: [
-            { id: "small", label: "Small" },
-            { id: "medium", label: "Medium" },
-            { id: "large", label: "Large" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "bottom-hem",
-      label: "Raw Hem",
-      desc: "Choose the finish for the bottom of your jeans.",
-      price: 5,
-      settings: [
-        {
-          key: "finish",
-          label: "Finish",
-          type: "select",
-          default: "standard",
-          options: [
-            { id: "standard", label: "Standard hem", price: 0 },
-            { id: "raw-cut", label: "Raw cut", price: 3 },
-            { id: "frayed", label: "Frayed hem", price: 5 },
-          ],
-        },
-      ],
-    },
-    {
-      id: "fondo-allungato",
-      label: "Fondo Allungato",
-      desc: "Lengthen by undoing the original hem.",
-      price: 12,
-      settings: [],
-    },
-  ],
-  tshirt: [
-    {
-      id: "canotta-taglio-netto",
-      label: "Canotta Taglio Netto",
-      desc: "Convert to tank top with raw cut edges.",
-      price: 12,
-      models: ["long-sleeve", "short-sleeve"],
-      settings: [],
-    },
-    {
-      id: "corta-cucita-bene",
-      label: "Corta Cucita Bene",
-      desc: "Shorten to short sleeve with proper hem.",
-      price: 8,
-      models: ["long-sleeve"],
-      settings: [],
-    },
-    {
-      id: "croppa-taglio-netto",
-      label: "Croppa Taglio Netto",
-      desc: "Crop with raw cut edge.",
-      price: 10,
-      models: ["long-sleeve", "short-sleeve", "tank-top"],
-      group: "crop",
-      settings: [],
-    },
-    {
-      id: "croppata-cucito-bene",
-      label: "Croppata Cucito Bene",
-      desc: "Crop with proper finished hem.",
-      price: 12,
-      models: ["long-sleeve", "short-sleeve", "tank-top"],
-      group: "crop",
-      settings: [],
-    },
-  ],
+  maglia: {
+    "manica-lunga": [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/maglia-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/maglia-crop-netto.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "accorcia-maniche",
+        label: "Accorcia maniche",
+        desc: "Riduci la lunghezza delle maniche.",
+        price: 8,
+        image: "assets/modifications/maglia-accorcia-maniche.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "canotta-taglio-netto",
+        label: "Trasforma in canotta con taglio netto",
+        desc: "Converti in canotta con taglio netto sulle maniche.",
+        price: 12,
+        image: "assets/modifications/maglia-canotta-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+    "manica-corta": [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/maglia-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/maglia-crop-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+    canotta: [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/maglia-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/maglia-crop-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+  },
+  polo: {
+    "manica-lunga": [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/polo-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/polo-crop-netto.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "accorcia-maniche",
+        label: "Accorcia maniche",
+        desc: "Riduci la lunghezza delle maniche.",
+        price: 8,
+        image: "assets/modifications/polo-accorcia-maniche.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "canotta-taglio-netto",
+        label: "Trasforma in canotta con taglio netto",
+        desc: "Converti in canotta con taglio netto sulle maniche.",
+        price: 12,
+        image: "assets/modifications/polo-canotta-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+    "manica-corta": [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/polo-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/polo-crop-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+    canotta: [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/polo-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/polo-crop-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+  },
+  camicia: {
+    "manica-lunga": [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/camicia-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/camicia-crop-netto.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "accorcia-maniche",
+        label: "Accorcia maniche",
+        desc: "Riduci la lunghezza delle maniche.",
+        price: 8,
+        image: "assets/modifications/camicia-accorcia-maniche.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "canotta-taglio-netto",
+        label: "Trasforma in canotta con taglio netto",
+        desc: "Converti in canotta con taglio netto sulle maniche.",
+        price: 12,
+        image: "assets/modifications/camicia-canotta-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+    "manica-corta": [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/camicia-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/camicia-crop-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+    canotta: [
+      {
+        id: "crop-con-orlo",
+        label: "Crop con orlo",
+        desc: "Accorciamento con orlo finito e cucito.",
+        price: 10,
+        group: "crop",
+        image: "assets/modifications/camicia-crop-orlo.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "crop-taglio-netto",
+        label: "Crop con taglio netto",
+        desc: "Accorciamento con taglio netto, senza orlo.",
+        price: 12,
+        group: "crop",
+        image: "assets/modifications/camicia-crop-netto.jpg",
+        needsFabric: false,
+      },
+    ],
+  },
+  jeans: {
+    _all: [
+      {
+        id: "fondo-raw-hem",
+        label: "Togliere orlo (Raw Hem)",
+        desc: "Rimuovi l'orlo per un look grezzo e naturale.",
+        price: 5,
+        group: "fondo",
+        image: "assets/modifications/jeans-raw-hem.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "fondo-allargare",
+        label: "Allargare il fondo",
+        desc: "Inserisci pannelli per allargare il fondo della gamba.",
+        price: 15,
+        group: "fondo",
+        image: "assets/modifications/jeans-fondo-allargare.jpg",
+        needsFabric: true,
+      },
+      {
+        id: "fondo-allargare-interno",
+        label: "Allargare il fondo dall'interno",
+        desc: "Allargamento dal retro con inserimento tessuto interno.",
+        price: 18,
+        group: "fondo",
+        image: "assets/modifications/jeans-fondo-interno.jpg",
+        needsFabric: true,
+      },
+      {
+        id: "accorcia-taglio-netto",
+        label: "Accorciare con taglio netto",
+        desc: "Accorcia con taglio netto lasciando fili bianchi visibili, senza orlo.",
+        price: 8,
+        image: "assets/modifications/jeans-accorcia-netto.jpg",
+        needsFabric: false,
+      },
+      {
+        id: "allargare-vestibilita",
+        label: "Allargare vestibilità",
+        desc: "Allarga leggermente tutto il pantalone dall'esterno.",
+        price: 15,
+        image: "assets/modifications/jeans-vestibilita.jpg",
+        needsFabric: true,
+      },
+      {
+        id: "copri-buchi",
+        label: "Coprire buchi",
+        desc: "Ripara e copri i buchi con patch di tessuto.",
+        price: 10,
+        image: "assets/modifications/jeans-copri-buchi.jpg",
+        needsFabric: true,
+      },
+      {
+        id: "ripara-tagli",
+        label: "Riparare tagli",
+        desc: "Cuci e rinforza i tagli esistenti.",
+        price: 12,
+        image: "assets/modifications/jeans-ripara-tagli.jpg",
+        needsFabric: false,
+      },
+    ],
+  },
 };
+
+const FABRIC_OPTIONS = [
+  { id: "denim", label: "Jeans/Denim" },
+  { id: "camo", label: "Camo" },
+  { id: "tuta", label: "Tuta" },
+  { id: "altro", label: "Altro" },
+];
 
 function initState() {
   return {
@@ -181,8 +347,9 @@ function initState() {
     creator: null,
     basePrice: 0,
     hasGarment: null,
+    garmentCategory: null,
     garmentType: null,
-    model: null,
+    jeansModel: null,
     brand: "",
     customizations: [],
     form: {
@@ -197,6 +364,7 @@ function initState() {
     },
     submitting: false,
     submittedOk: false,
+    modal: null,
   };
 }
 
@@ -254,7 +422,9 @@ function renderCurrentStep() {
   if (s.submittedOk) return renderDone();
   if (s.step === "start") return renderStepStart();
   if (s.step === "no-garment") return renderStepNoGarment();
-  if (s.step === "garment") return renderStepGarment();
+  if (s.step === "garment-category") return renderStepGarmentCategory();
+  if (s.step === "garment-type") return renderStepGarmentType();
+  if (s.step === "jeans-model") return renderStepJeansModel();
   if (s.step === "customize") return renderStepCustomize();
   if (s.step === "review") return renderStepReview();
   return "";
@@ -264,9 +434,9 @@ function renderDone() {
   return `
     <div class="cfg-done">
       <div class="cfg-done-icon">✓</div>
-      <h2>Request sent!</h2>
-      <p>Your project has been received. ${s.creator ? "The professional will contact you with a quote." : "The professional will contact you with a quote."}</p>
-      <button class="cfg-btn cfg-btn-primary" type="button" id="cfg-new-project">New project</button>
+      <h2>Richiesta inviata!</h2>
+      <p>Il tuo progetto è stato ricevuto. ${s.creator ? "Il customizer ti contatterà con un preventivo." : "Il professionista ti contatterà con un preventivo."}</p>
+      <button class="cfg-btn cfg-btn-primary" type="button" id="cfg-new-project">Nuovo progetto</button>
     </div>`;
 }
 
@@ -275,19 +445,19 @@ function renderStepStart() {
     <div class="cfg-step">
       <div class="cfg-step-header">
         <span class="cfg-step-num">Step 1</span>
-        <h2>Do you already have a garment?</h2>
-        <p>Tell us where to start — we'll guide you through every step.</p>
+        <h2>Possiedi già il capo da personalizzare?</h2>
+        <p>Dicci da dove partire — ti guideremo passo dopo passo.</p>
       </div>
       <div class="cfg-choice-grid">
         <button class="cfg-choice-card${s.hasGarment === true ? " active" : ""}" type="button" data-has-garment="true">
           <span class="cfg-choice-icon">✓</span>
-          <span class="cfg-choice-label">Yes</span>
-          <span class="cfg-choice-desc">I already have a garment to transform</span>
+          <span class="cfg-choice-label">Sì</span>
+          <span class="cfg-choice-desc">Ho già un capo da trasformare</span>
         </button>
         <button class="cfg-choice-card${s.hasGarment === false ? " active" : ""}" type="button" data-has-garment="false">
           <span class="cfg-choice-icon">✕</span>
           <span class="cfg-choice-label">No</span>
-          <span class="cfg-choice-desc">I want to create from scratch</span>
+          <span class="cfg-choice-desc">Voglio creare da zero</span>
         </button>
       </div>
     </div>`;
@@ -301,9 +471,9 @@ function renderStepNoGarment() {
   return `
     <div class="cfg-step">
       <div class="cfg-step-header">
-        <span class="cfg-step-num">Start fresh</span>
-        <h2>Create from scratch</h2>
-        <p>${ci ? `Choose a base garment from <strong>${escHtml(ci.name)}</strong> collection to start from.` : "Find a professional, choose a garment from their collection, and build your unique piece."}</p>
+        <span class="cfg-step-num">Parti da zero</span>
+        <h2>Crea da zero</h2>
+        <p>${ci ? `Scegli un capo base dalla collezione di <strong>${escHtml(ci.name)}</strong> per iniziare.` : "Trova un professionista, scegli un capo dalla sua collezione e costruisci il tuo pezzo unico."}</p>
       </div>
       ${
         items.length
@@ -323,64 +493,140 @@ function renderStepNoGarment() {
           .join("")}
       </div>`
           : ci
-            ? `<p style="color:var(--text-tertiary);margin-top:16px">No base garments available from this customizer.</p>`
+            ? `<p style="color:var(--text-tertiary);margin-top:16px">Nessun capo disponibile da questo customizer.</p>`
             : `<div class="cfg-vendor-cta"><p style="color:var(--text-secondary);margin-bottom:8px">Nessun capo disponibile da questo customizer.</p><a class="cfg-btn cfg-btn-primary" href="/customizers?from=configure">Scegli un altro customizer →</a></div>`
       }
       <div class="cfg-step-actions" style="margin-top:24px">
-        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-start">← Start over</button>
+        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-start">← Ricomincia</button>
       </div>
     </div>`;
 }
 
-function renderStepGarment() {
+function renderStepGarmentCategory() {
   return `
     <div class="cfg-step">
       <div class="cfg-step-header">
         <span class="cfg-step-num">Step 2</span>
-        <h2>Select your garment</h2>
-        <p>Choose the piece you want to customize.</p>
+        <h2>Scegli il tipo di capo</h2>
+        <p>Seleziona la categoria del capo che vuoi personalizzare.</p>
       </div>
       <div class="cfg-type-grid">
         ${GARMENT_CATEGORIES.map(
           (c) => `
-          <button class="cfg-type-card${s.garmentType === c.id ? " active" : ""}" type="button" data-garment-type="${c.id}">
+          <button class="cfg-type-card${s.garmentCategory === c.id ? " active" : ""}" type="button" data-garment-category="${c.id}">
             <span class="cfg-type-label">${c.label}</span>
             <span class="cfg-type-desc">${c.desc}</span>
           </button>`,
         ).join("")}
       </div>
-      ${
-        s.garmentType
-          ? `
-        <div class="cfg-section">
-          <h3 class="cfg-section-title">Model</h3>
-          <div class="cfg-opt-group">
-            ${GARMENT[s.garmentType].models
-              .map(
-                (m) => `
-              <button class="cfg-opt${s.model === m.id ? " active" : ""}" type="button" data-model="${m.id}">${m.label}</button>`,
-              )
-              .join("")}
-          </div>
-        </div>
-        <div class="cfg-section">
-          <h3 class="cfg-section-title">Brand <span class="cfg-optional">(optional)</span></h3>
-          <input class="cfg-input" id="cfg-brand" type="text" placeholder="Vintage, Nike, Levi's, Zara..." value="${escHtml(s.brand)}">
-        </div>
-        <button class="cfg-btn cfg-btn-primary cfg-btn-next" type="button" id="cfg-to-customize">Continue →</button>`
-          : ""
-      }
+      <div class="cfg-step-actions">
+        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-start">← Indietro</button>
+        ${
+          s.garmentCategory
+            ? s.garmentCategory === "jeans"
+              ? `<button class="cfg-btn cfg-btn-primary cfg-btn-next" type="button" id="cfg-to-jeans-model">Continua →</button>`
+              : `<button class="cfg-btn cfg-btn-primary cfg-btn-next" type="button" id="cfg-to-garment-type">Continua →</button>`
+            : ""
+        }
+      </div>
     </div>`;
 }
 
+function renderStepGarmentType() {
+  const cat = s.garmentCategory;
+  const types = GARMENT_TYPES[cat] || [];
+  const catLabel = GARMENT_CATEGORIES.find((c) => c.id === cat)?.label || "";
+  return `
+    <div class="cfg-step">
+      <div class="cfg-step-header">
+        <span class="cfg-step-num">Step 3</span>
+        <h2>Che tipo di capo è?</h2>
+        <p>Scegli il modello della tua ${escHtml(catLabel)}.</p>
+      </div>
+      <div class="cfg-type-grid">
+        ${types
+          .map(
+            (t) => `
+          <button class="cfg-type-card${s.garmentType === t.id ? " active" : ""}" type="button" data-garment-type="${t.id}">
+            <span class="cfg-type-label">${t.label}</span>
+          </button>`,
+          )
+          .join("")}
+      </div>
+      <div class="cfg-section">
+        <h3 class="cfg-section-title">Marca <span class="cfg-optional">(opzionale)</span></h3>
+        <input class="cfg-input" id="cfg-brand" type="text" placeholder="Vintage, Nike, Levi's, Zara..." value="${escHtml(s.brand)}">
+      </div>
+      <div class="cfg-step-actions">
+        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-category">← Indietro</button>
+        ${
+          s.garmentType
+            ? `<button class="cfg-btn cfg-btn-primary cfg-btn-next" type="button" id="cfg-to-customize">Continua →</button>`
+            : ""
+        }
+      </div>
+    </div>`;
+}
+
+function renderStepJeansModel() {
+  return `
+    <div class="cfg-step">
+      <div class="cfg-step-header">
+        <span class="cfg-step-num">Step 3</span>
+        <h2>Scegli il modello</h2>
+        <p>Seleziona il modello del tuo jeans.</p>
+      </div>
+      <div class="cfg-type-grid">
+        ${JEANS_MODELS.map(
+          (m) => `
+          <button class="cfg-type-card${s.jeansModel === m.id ? " active" : ""}" type="button" data-jeans-model="${m.id}">
+            <span class="cfg-type-label">${m.label}</span>
+          </button>`,
+        ).join("")}
+      </div>
+      <div class="cfg-section">
+        <h3 class="cfg-section-title">Marca <span class="cfg-optional">(opzionale)</span></h3>
+        <input class="cfg-input" id="cfg-brand" type="text" placeholder="Levi's, Diesel, Zara..." value="${escHtml(s.brand)}">
+      </div>
+      <div class="cfg-step-actions">
+        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-category">← Indietro</button>
+        ${
+          s.jeansModel
+            ? `<button class="cfg-btn cfg-btn-primary cfg-btn-next" type="button" id="cfg-to-customize">Continua →</button>`
+            : ""
+        }
+      </div>
+    </div>`;
+}
+
+function getActiveCustomizations() {
+  if (s.garmentCategory === "jeans") return CUSTOMIZATIONS.jeans._all || [];
+  const cat = CUSTOMIZATIONS[s.garmentCategory];
+  if (!cat) return [];
+  if (!s.garmentType) return Object.values(cat).flat();
+  return cat[s.garmentType] || [];
+}
+
+function getAvailableCustomizations() {
+  const defs = getActiveCustomizations();
+  const activeGroups = new Set(
+    s.customizations.map((c) => findCustDef(c.id)?.group).filter(Boolean),
+  );
+  return defs.filter((d) => {
+    if (s.customizations.find((c) => c.id === d.id)) return false;
+    if (d.group && activeGroups.has(d.group)) return false;
+    return true;
+  });
+}
+
 function renderCustContent() {
-  const available = getAvailableCustomizations(s.garmentType, s.model);
+  const available = getAvailableCustomizations();
   return `
       ${
         s.customizations.length > 0
           ? `
         <div class="cfg-section">
-          <h3 class="cfg-section-title">Active Customizations</h3>
+          <h3 class="cfg-section-title">Modifiche attive</h3>
           <div class="cfg-active-custs">
             ${s.customizations.map((c, i) => renderCustomizationItem(c, i)).join("")}
           </div>
@@ -391,19 +637,24 @@ function renderCustContent() {
         available.length > 0
           ? `
         <div class="cfg-section">
-          <h3 class="cfg-section-title">Available Modifications</h3>
+          <h3 class="cfg-section-title">Modifiche disponibili</h3>
           <div class="cfg-cust-cards">
             ${available
               .map(
                 (d) => `
               <div class="cfg-cust-card">
+                ${
+                  d.image
+                    ? `<div class="cfg-cust-card-image"><img src="${d.image}" alt="${escHtml(d.label)}" onerror="this.parentElement.style.display='none'"></div>`
+                    : ""
+                }
                 <div class="cfg-cust-card-info">
                   <span class="cfg-cust-card-name">${d.label}</span>
                   <span class="cfg-cust-card-desc">${d.desc}</span>
                 </div>
                 <div class="cfg-cust-card-action">
                   <span class="cfg-cust-card-price">+€${d.price}</span>
-                  <button class="cfg-cust-card-add" type="button" data-add-cust="${d.id}">+ Add</button>
+                  <button class="cfg-cust-card-add" type="button" data-add-cust="${d.id}">+ Aggiungi</button>
                 </div>
               </div>`,
               )
@@ -415,59 +666,53 @@ function renderCustContent() {
 }
 
 function renderStepCustomize() {
+  const catLabel =
+    GARMENT_CATEGORIES.find((c) => c.id === s.garmentCategory)?.label || "";
+  let typeLabel = "";
+  if (s.garmentCategory === "jeans") {
+    typeLabel = JEANS_MODELS.find((m) => m.id === s.jeansModel)?.label || "";
+  } else {
+    typeLabel =
+      GARMENT_TYPES[s.garmentCategory]?.find((t) => t.id === s.garmentType)
+        ?.label || "";
+  }
   return `
     <div class="cfg-step">
       <div class="cfg-step-header">
-        <span class="cfg-step-num">Step 3</span>
-        <h2>Customize your ${GARMENT[s.garmentType].label}</h2>
-        <p>Add the modifications you want.</p>
+        <span class="cfg-step-num">Step 4</span>
+        <h2>Personalizza la tua ${escHtml(catLabel)}</h2>
+        <p>Aggiungi le modifiche che desideri${typeLabel ? " al tuo capo " + escHtml(typeLabel) : ""}.</p>
       </div>
       <div id="cfg-cust-content">${renderCustContent()}</div>
       <div class="cfg-step-actions">
-        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-garment">← Back</button>
-        <button class="cfg-btn cfg-btn-primary cfg-btn-next" type="button" id="cfg-to-review">Review Order →</button>
+        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-type">← Indietro</button>
+        <button class="cfg-btn cfg-btn-primary cfg-btn-next" type="button" id="cfg-to-review">Riepilogo →</button>
       </div>
     </div>`;
 }
 
 function renderCustomizationItem(c, i) {
-  const def = findCustDef(s.garmentType, c.id);
+  const def = findCustDef(c.id);
   if (!def) return "";
   const open = c._open;
 
-  const settingRows = def.settings
-    .map((setting) => {
-      const val =
-        c.settings[setting.key] !== undefined
-          ? c.settings[setting.key]
-          : setting.default;
-      if (!isSettingVisible(setting, c)) return "";
-      if (setting.type === "boolean") {
-        return `
-        <div class="cfg-setting">
-          <label class="cfg-toggle">
-            <input type="checkbox" data-cust-setting="${i}" data-setting-key="${setting.key}" ${val ? "checked" : ""}>
-            <span class="cfg-toggle-track"></span>
-            <span class="cfg-toggle-label">${setting.label}</span>
-          </label>
-        </div>`;
-      }
-      if (setting.type === "select") {
-        const optHtml = setting.options
-          .map(
-            (o) => `
-        <button class="cfg-opt${val === o.id ? " active" : ""}" type="button" data-cust-opt="${i}" data-setting-key="${setting.key}" data-opt-id="${o.id}">${o.label}${o.price ? ` <span class="cfg-price">+€${o.price}</span>` : ""}</button>`,
-          )
-          .join("");
-        return `
-        <div class="cfg-setting">
-          <span class="cfg-setting-label">${setting.label}</span>
-          <div class="cfg-opt-group">${optHtml}</div>
-        </div>`;
-      }
-      return "";
-    })
-    .join("");
+  const fabricRows = def.needsFabric
+    ? `
+      <div class="cfg-setting">
+        <span class="cfg-setting-label">Tessuto</span>
+        <div class="cfg-opt-group">
+          ${FABRIC_OPTIONS.map(
+            (fo) => `
+          <button class="cfg-opt${c.fabric === fo.id ? " active" : ""}" type="button" data-cust-fabric="${i}" data-fabric-id="${fo.id}">${fo.label}</button>`,
+          ).join("")}
+        </div>
+        ${
+          c.fabric === "altro"
+            ? `<input class="cfg-input" style="margin-top:8px" id="cfg-fabric-custom-${i}" type="text" placeholder="Specifica il tessuto..." value="${escHtml(c.fabricCustom || "")}">`
+            : ""
+        }
+      </div>`
+    : "";
 
   return `
     <div class="cfg-cust-item">
@@ -475,7 +720,7 @@ function renderCustomizationItem(c, i) {
         <div class="cfg-cust-info">
           <span class="cfg-cust-check">✓</span>
           <span class="cfg-cust-name">${def.label}</span>
-          <span class="cfg-cust-price">+€${custPrice(c)}</span>
+          <span class="cfg-cust-price">+€${def.price}</span>
         </div>
         <div class="cfg-cust-actions">
           <button class="cfg-cust-toggle" type="button" data-toggle-cust="${i}">
@@ -485,30 +730,35 @@ function renderCustomizationItem(c, i) {
         </div>
       </div>
       <div class="cfg-cust-settings" style="display:${open ? "block" : "none"}">
-        ${settingRows}
+        ${fabricRows}
       </div>
     </div>`;
 }
 
 function renderStepReview() {
   const ci = s.creator ? getCustomizer(s.creator) : null;
-  const gi = s.garmentType ? GARMENT[s.garmentType] : null;
-  const ml =
-    s.garmentType && s.model
-      ? GARMENT[s.garmentType].models.find((m) => m.id === s.model)?.label
-      : null;
+  const catLabel =
+    GARMENT_CATEGORIES.find((c) => c.id === s.garmentCategory)?.label || "";
+  let typeLabel = "";
+  if (s.garmentCategory === "jeans") {
+    typeLabel = JEANS_MODELS.find((m) => m.id === s.jeansModel)?.label || "";
+  } else {
+    typeLabel =
+      GARMENT_TYPES[s.garmentCategory]?.find((t) => t.id === s.garmentType)
+        ?.label || "";
+  }
   const total = calculateTotal();
 
   return `
     <div class="cfg-step">
       <div class="cfg-step-header">
-        <span class="cfg-step-num">Step 4</span>
-        <h2>Review your project</h2>
-        <p>Check everything is right before sending.</p>
+        <span class="cfg-step-num">Step 5</span>
+        <h2>Riepilogo del progetto</h2>
+        <p>Controlla che tutto sia corretto prima di inviare.</p>
       </div>
       <div class="cfg-project-card">
         <div class="cfg-project-card-header">
-          <span class="cfg-project-card-label">Custom Project</span>
+          <span class="cfg-project-card-label">Progetto personalizzato</span>
         </div>
         <div class="cfg-project-card-body">
           ${
@@ -521,62 +771,46 @@ function renderStepReview() {
               : ""
           }
           <div class="cfg-project-row">
-            <span class="cfg-project-label">Garment</span>
-            <span class="cfg-project-value">${gi ? gi.label : ""}${ml ? " — " + ml : ""}${s.brand ? " (" + s.brand + ")" : ""}</span>
+            <span class="cfg-project-label">Capo</span>
+            <span class="cfg-project-value">${catLabel}${typeLabel ? " — " + typeLabel : ""}${s.brand ? " (" + escHtml(s.brand) + ")" : ""}</span>
           </div>
           ${
             s.customizations.length > 0
               ? `
           <div class="cfg-project-section">
-            <span class="cfg-project-label">Modifications</span>
+            <span class="cfg-project-label">Modifiche</span>
             <ul class="cfg-project-list">
               ${s.customizations
                 .map((c) => {
-                  const def = findCustDef(s.garmentType, c.id);
+                  const def = findCustDef(c.id);
                   if (!def) return "";
-                  const details = def.settings
-                    .map((st) => {
-                      const v = c.settings[st.key];
-                      if (st.type === "boolean") return "";
-                      const opt = st.options?.find((o) => o.id === v);
-                      return opt && opt.label && opt.label !== v
-                        ? opt.label
-                        : "";
-                    })
-                    .filter(Boolean)
-                    .join(", ");
-                  return `<li>${def.label}${details ? " — " + details : ""} <span class="cfg-project-price">+€${custPrice(c)}</span></li>`;
+                  const fabricLine =
+                    def.needsFabric && c.fabric
+                      ? ` — Tessuto: ${c.fabric === "altro" ? c.fabricCustom || "Altro" : FABRIC_OPTIONS.find((fo) => fo.id === c.fabric)?.label || c.fabric}`
+                      : "";
+                  return `<li>${def.label}${fabricLine} <span class="cfg-project-price">+€${def.price}</span></li>`;
                 })
                 .join("")}
             </ul>
           </div>`
               : ""
           }
-          ${
-            s.basePrice > 0
-              ? `
-          <div class="cfg-project-row">
-            <span class="cfg-project-label">Base garment</span>
-            <span class="cfg-project-value">€${s.basePrice.toFixed(2)}</span>
-          </div>`
-              : ""
-          }
           <div class="cfg-project-total">
-            <span>Estimated total</span>
+            <span>Totale stimato</span>
             <span class="cfg-project-total-amount">€${total.toFixed(2)}</span>
           </div>
         </div>
       </div>
       <div class="cfg-section" style="margin-top:32px">
-        <h3 class="cfg-section-title">Your details</h3>
+        <h3 class="cfg-section-title">I tuoi dati</h3>
         <div class="cfg-form-grid">
-          <input class="cfg-input" id="f-name" type="text" placeholder="Name *" value="${escHtml(s.form.name)}">
-          <input class="cfg-input" id="f-surname" type="text" placeholder="Surname *" value="${escHtml(s.form.surname)}">
+          <input class="cfg-input" id="f-name" type="text" placeholder="Nome *" value="${escHtml(s.form.name)}">
+          <input class="cfg-input" id="f-surname" type="text" placeholder="Cognome *" value="${escHtml(s.form.surname)}">
           <input class="cfg-input" id="f-email" type="email" placeholder="Email *" value="${escHtml(s.form.email)}">
-          <input class="cfg-input" id="f-instagram" type="text" placeholder="Instagram (optional)" value="${escHtml(s.form.instagram)}">
-          <input class="cfg-input" id="f-phone" type="text" placeholder="Phone (optional)" value="${escHtml(s.form.phone)}">
+          <input class="cfg-input" id="f-instagram" type="text" placeholder="Instagram (opzionale)" value="${escHtml(s.form.instagram)}">
+          <input class="cfg-input" id="f-phone" type="text" placeholder="Telefono (opzionale)" value="${escHtml(s.form.phone)}">
         </div>
-        <textarea class="cfg-input cfg-textarea" id="f-notes" placeholder="Notes — describe your vision, add references or special requests (optional)">${escHtml(s.form.notes)}</textarea>
+        <textarea class="cfg-input cfg-textarea" id="f-notes" placeholder="Note — descrivi la tua visione, aggiungi riferimenti o richieste speciali (opzionale)">${escHtml(s.form.notes)}</textarea>
       </div>
       <div class="cfg-section">
         <label class="cfg-checkbox">
@@ -592,8 +826,8 @@ function renderStepReview() {
       </div>
       <div id="cfg-form-err" class="cfg-form-err"></div>
       <div class="cfg-step-actions">
-        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-customize">← Back</button>
-        <button class="cfg-btn cfg-btn-primary" type="button" id="cfg-submit" ${s.submitting ? "disabled" : ""}>${s.submitting ? "Sending..." : "Submit project"}</button>
+        <button class="cfg-btn cfg-btn-ghost" type="button" id="cfg-back-customize">← Indietro</button>
+        <button class="cfg-btn cfg-btn-primary" type="button" id="cfg-submit" ${s.submitting ? "disabled" : ""}>${s.submitting ? "Invio in corso..." : "Invia progetto"}</button>
       </div>
     </div>`;
 }
@@ -601,17 +835,22 @@ function renderStepReview() {
 function renderSummary() {
   if (s.submittedOk) return "";
   const ci = s.creator ? getCustomizer(s.creator) : null;
-  const gi = s.garmentType ? GARMENT[s.garmentType] : null;
-  const ml =
-    s.garmentType && s.model
-      ? GARMENT[s.garmentType].models.find((m) => m.id === s.model)?.label
-      : null;
+  const catLabel =
+    GARMENT_CATEGORIES.find((c) => c.id === s.garmentCategory)?.label || "";
+  let typeLabel = "";
+  if (s.garmentCategory === "jeans") {
+    typeLabel = JEANS_MODELS.find((m) => m.id === s.jeansModel)?.label || "";
+  } else {
+    typeLabel =
+      GARMENT_TYPES[s.garmentCategory]?.find((t) => t.id === s.garmentType)
+        ?.label || "";
+  }
   const total = calculateTotal();
 
   return `
     <div class="cfg-summary">
-      <div class="cfg-summary-preview"><img src="" alt="Preview" class="cfg-preview-img"></div>
-      <h3 class="cfg-summary-title">Your Custom Project</h3>
+      <div class="cfg-summary-preview"><img src="" alt="Anteprima" class="cfg-preview-img"></div>
+      <h3 class="cfg-summary-title">Il tuo progetto</h3>
       ${
         ci
           ? `
@@ -622,20 +861,20 @@ function renderSummary() {
           : ""
       }
       ${
-        gi
+        catLabel
           ? `
       <div class="cfg-summary-row">
-        <span class="cfg-summary-label">Garment</span>
-        <span class="cfg-summary-value">${gi.label}</span>
+        <span class="cfg-summary-label">Capo</span>
+        <span class="cfg-summary-value">${catLabel}</span>
       </div>`
           : ""
       }
       ${
-        ml
+        typeLabel
           ? `
       <div class="cfg-summary-row">
-        <span class="cfg-summary-label">Model</span>
-        <span class="cfg-summary-value">${ml}</span>
+        <span class="cfg-summary-label">Modello</span>
+        <span class="cfg-summary-value">${typeLabel}</span>
       </div>`
           : ""
       }
@@ -643,102 +882,51 @@ function renderSummary() {
         s.brand
           ? `
       <div class="cfg-summary-row">
-        <span class="cfg-summary-label">Brand</span>
+        <span class="cfg-summary-label">Marca</span>
         <span class="cfg-summary-value">${escHtml(s.brand)}</span>
       </div>`
           : ""
       }
       ${s.customizations
         .map((c) => {
-          const def = findCustDef(s.garmentType, c.id);
+          const def = findCustDef(c.id);
           if (!def) return "";
           return `
         <div class="cfg-summary-row cfg-summary-cust">
           <span class="cfg-summary-label">${def.label}</span>
-          <span class="cfg-summary-value">+€${custPrice(c)}</span>
+          <span class="cfg-summary-value">+€${def.price}</span>
         </div>`;
         })
         .join("")}
-      ${
-        s.basePrice > 0
-          ? `
-      <div class="cfg-summary-row">
-        <span class="cfg-summary-label">Base garment</span>
-        <span class="cfg-summary-value">€${s.basePrice.toFixed(2)}</span>
-      </div>`
-          : ""
-      }
       <div class="cfg-summary-divider"></div>
       <div class="cfg-summary-total">
-        <span>Estimated total</span>
+        <span>Totale stimato</span>
         <span class="cfg-summary-amount">€${total.toFixed(2)}</span>
       </div>
       <div class="cfg-summary-edit" id="cfg-edit-cust">
-        <button class="cfg-btn cfg-btn-ghost cfg-btn-small" type="button" id="cfg-back-to-cust">Edit project</button>
+        <button class="cfg-btn cfg-btn-ghost cfg-btn-small" type="button" id="cfg-back-to-cust">Modifica progetto</button>
       </div>
     </div>`;
 }
 
-function isSettingVisible(setting, cust) {
-  if (!setting.dependsOn) return true;
-  return cust.settings[setting.dependsOn.key] === setting.dependsOn.value;
+function findCustDef(id) {
+  if (s.garmentCategory === "jeans") {
+    return (CUSTOMIZATIONS.jeans._all || []).find((d) => d.id === id) || null;
+  }
+  const cat = CUSTOMIZATIONS[s.garmentCategory];
+  if (!cat) return null;
+  const list = cat[s.garmentType] || [];
+  return list.find((d) => d.id === id) || null;
 }
 
 function calculateTotal() {
   let t = s.basePrice || 0;
   for (const c of s.customizations) {
-    const def = findCustDef(s.garmentType, c.id);
+    const def = findCustDef(c.id);
     if (!def) continue;
     t += def.price || 0;
-    for (const setting of def.settings) {
-      if (!isSettingVisible(setting, c)) continue;
-      if (setting.type === "select") {
-        const opt = setting.options?.find(
-          (o) => o.id === c.settings[setting.key],
-        );
-        if (opt && opt.price) t += opt.price;
-      }
-    }
   }
   return t;
-}
-
-function custPrice(c) {
-  let t = 0;
-  const def = findCustDef(s.garmentType, c.id);
-  if (!def) return 0;
-  t += def.price || 0;
-  for (const setting of def.settings) {
-    if (!isSettingVisible(setting, c)) continue;
-    if (setting.type === "select") {
-      const opt = setting.options?.find(
-        (o) => o.id === c.settings[setting.key],
-      );
-      if (opt && opt.price) t += opt.price;
-    }
-  }
-  return t;
-}
-
-function findCustDef(type, id) {
-  const list = CUSTOMIZATIONS[type];
-  if (!list) return null;
-  return list.find((d) => d.id === id) || null;
-}
-
-function getAvailableCustomizations(garmentType, model) {
-  const defs = CUSTOMIZATIONS[garmentType] || [];
-  const activeGroups = new Set(
-    s.customizations
-      .map((c) => findCustDef(garmentType, c.id)?.group)
-      .filter(Boolean),
-  );
-  return defs.filter((d) => {
-    if (s.customizations.find((c) => c.id === d.id)) return false;
-    if (d.models && model && !d.models.includes(model)) return false;
-    if (d.group && activeGroups.has(d.group)) return false;
-    return true;
-  });
 }
 
 function escHtml(str) {
@@ -893,32 +1081,42 @@ function listen() {
     if (t.hasAttribute("data-has-garment")) {
       const v = t.dataset.hasGarment === "true";
       s.hasGarment = v;
-      s.step = v ? "garment" : "no-garment";
+      s.step = v ? "garment-category" : "no-garment";
       render();
       return;
     }
 
     if (t.hasAttribute("data-choose-base")) {
       s.hasGarment = false;
-      s.garmentType = t.dataset.chooseBase;
+      const base = t.dataset.chooseBase;
+      if (base === "jeans") s.garmentCategory = "jeans";
+      else s.garmentCategory = "maglia";
       s.basePrice = parseFloat(t.dataset.basePrice) || 0;
-      s.model = GARMENT[s.garmentType]?.models[0]?.id || null;
       s.customizations = [];
       s.step = "customize";
       render();
       return;
     }
 
-    if (t.hasAttribute("data-garment-type")) {
-      s.garmentType = t.dataset.garmentType;
-      s.model = null;
+    if (t.hasAttribute("data-garment-category")) {
+      s.garmentCategory = t.dataset.garmentCategory;
+      s.garmentType = null;
+      s.jeansModel = null;
       s.customizations = [];
       render();
       return;
     }
 
-    if (t.hasAttribute("data-model")) {
-      s.model = t.dataset.model;
+    if (t.hasAttribute("data-garment-type")) {
+      s.garmentType = t.dataset.garmentType;
+      s.customizations = [];
+      render();
+      return;
+    }
+
+    if (t.hasAttribute("data-jeans-model")) {
+      s.jeansModel = t.dataset.jeansModel;
+      s.customizations = [];
       render();
       return;
     }
@@ -961,20 +1159,12 @@ function listen() {
       return;
     }
 
-    if (t.hasAttribute("data-cust-opt")) {
-      const i = parseInt(t.dataset.custOpt);
-      const key = t.dataset.settingKey;
-      const optId = t.dataset.optId;
+    if (t.hasAttribute("data-cust-fabric")) {
+      const i = parseInt(t.dataset.custFabric);
+      const fabricId = t.dataset.fabricId;
       const c = s.customizations[i];
       if (c) {
-        c.settings[key] = optId;
-        const parent = t.closest(".cfg-opt-group") || t.parentNode;
-        if (parent) {
-          parent
-            .querySelectorAll(".cfg-opt")
-            .forEach((x) => x.classList.remove("active"));
-          t.classList.add("active");
-        }
+        c.fabric = fabricId;
         const el = document.getElementById("cfg-cust-content");
         if (el) el.innerHTML = renderCustContent();
         updateSidebar();
@@ -982,8 +1172,23 @@ function listen() {
       return;
     }
 
+    if (t.id === "cfg-to-garment-type") {
+      if (!s.garmentCategory || s.garmentCategory === "jeans") return;
+      s.step = "garment-type";
+      render();
+      return;
+    }
+
+    if (t.id === "cfg-to-jeans-model") {
+      if (s.garmentCategory !== "jeans") return;
+      s.step = "jeans-model";
+      render();
+      return;
+    }
+
     if (t.id === "cfg-to-customize") {
-      if (!s.model) return;
+      if (s.garmentCategory === "jeans" && !s.jeansModel) return;
+      if (s.garmentCategory !== "jeans" && !s.garmentType) return;
       s.step = "customize";
       render();
       return;
@@ -995,8 +1200,21 @@ function listen() {
       return;
     }
 
-    if (t.id === "cfg-back-garment") {
-      s.step = s.hasGarment === false ? "no-garment" : "garment";
+    if (t.id === "cfg-back-category") {
+      s.step = "garment-category";
+      s.garmentType = null;
+      s.jeansModel = null;
+      s.customizations = [];
+      render();
+      return;
+    }
+
+    if (t.id === "cfg-back-type") {
+      if (s.garmentCategory === "jeans") {
+        s.step = "jeans-model";
+      } else {
+        s.step = "garment-type";
+      }
       render();
       return;
     }
@@ -1061,8 +1279,8 @@ function listen() {
 
     if (t.hasAttribute("data-search-garment")) {
       s.hasGarment = true;
-      s.garmentType = t.dataset.searchGarment;
-      s.step = "garment";
+      s.garmentCategory = t.dataset.searchGarment;
+      s.step = "garment-category";
       render();
       return;
     }
@@ -1070,8 +1288,12 @@ function listen() {
     if (t.hasAttribute("data-search-model")) {
       const [gt, mid] = t.dataset.searchModel.split(":");
       s.hasGarment = true;
-      s.garmentType = gt;
-      s.model = mid;
+      s.garmentCategory = gt;
+      if (gt === "jeans") {
+        s.jeansModel = mid;
+      } else {
+        s.garmentType = mid;
+      }
       s.step = "customize";
       render();
       return;
@@ -1080,11 +1302,9 @@ function listen() {
     if (t.hasAttribute("data-search-cust")) {
       const [gt, cid] = t.dataset.searchCust.split(":");
       s.hasGarment = true;
-      s.garmentType = gt;
+      s.garmentCategory = gt;
       s.step = "customize";
-      const def = findCustDef(gt, cid);
-      if (def && !s.customizations.find((x) => x.id === cid))
-        addCustomization(cid);
+      if (!s.customizations.find((x) => x.id === cid)) addCustomization(cid);
       render();
     }
   });
@@ -1093,21 +1313,14 @@ function listen() {
     const id = e.target.id;
     if (id === "cfg-brand") s.brand = e.target.value;
     else if (id.startsWith("f-")) s.form[id.replace("f-", "")] = e.target.value;
+    else if (id.startsWith("cfg-fabric-custom-")) {
+      const i = parseInt(id.replace("cfg-fabric-custom-", ""));
+      const c = s.customizations[i];
+      if (c) c.fabricCustom = e.target.value;
+    }
   });
 
   root.addEventListener("change", (e) => {
-    if (e.target.matches("[data-cust-setting]")) {
-      const i = parseInt(e.target.dataset.custSetting);
-      const key = e.target.dataset.settingKey;
-      const c = s.customizations[i];
-      if (c) {
-        c.settings[key] = e.target.checked;
-        const el = document.getElementById("cfg-cust-content");
-        if (el) el.innerHTML = renderCustContent();
-        updateSidebar();
-      }
-      return;
-    }
     if (e.target.id === "f-terms") {
       s.form.acceptTerms = e.target.checked;
     }
@@ -1119,17 +1332,20 @@ function listen() {
 
 function addCustomization(id) {
   if (s.customizations.find((c) => c.id === id)) return;
-  const def = findCustDef(s.garmentType, id);
+  const def = findCustDef(id);
   if (!def) return;
   if (def.group) {
     s.customizations = s.customizations.filter((c) => {
-      const d = findCustDef(s.garmentType, c.id);
+      const d = findCustDef(c.id);
       return !d || d.group !== def.group;
     });
   }
-  const settings = {};
-  for (const setting of def.settings) settings[setting.key] = setting.default;
-  s.customizations.push({ id, settings, _open: true });
+  s.customizations.push({
+    id,
+    fabric: def.needsFabric ? "denim" : null,
+    fabricCustom: "",
+    _open: true,
+  });
 }
 
 function updateSidebar() {
@@ -1161,18 +1377,18 @@ async function submitOrder() {
   };
 
   if (!name || !surname) {
-    errEl.textContent = "Please enter your name and surname.";
+    errEl.textContent = "Inserisci nome e cognome.";
     return;
   }
   if (!email) {
-    errEl.textContent = "Please enter your email.";
+    errEl.textContent = "Inserisci la tua email.";
     return;
   }
   if (!acceptTerms || !acceptPrivacy) {
     const missing = [];
     if (!acceptTerms) missing.push("Termini e condizioni");
     if (!acceptPrivacy) missing.push("Privacy Policy");
-    errEl.textContent = "Please accept: " + missing.join(" and ");
+    errEl.textContent = "Accetta: " + missing.join(" e ");
     return;
   }
 
@@ -1181,25 +1397,26 @@ async function submitOrder() {
   render();
 
   const total = calculateTotal();
-  const garmentLabel = GARMENT[s.garmentType]?.label || "";
-  const modelLabel =
-    s.garmentType && s.model
-      ? GARMENT[s.garmentType].models.find((m) => m.id === s.model)?.label
-      : "";
+  const catLabel =
+    GARMENT_CATEGORIES.find((c) => c.id === s.garmentCategory)?.label || "";
+  let typeLabel = "";
+  if (s.garmentCategory === "jeans") {
+    typeLabel = JEANS_MODELS.find((m) => m.id === s.jeansModel)?.label || "";
+  } else {
+    typeLabel =
+      GARMENT_TYPES[s.garmentCategory]?.find((t) => t.id === s.garmentType)
+        ?.label || "";
+  }
 
   const custLines = s.customizations
     .map((c) => {
-      const def = findCustDef(s.garmentType, c.id);
+      const def = findCustDef(c.id);
       if (!def) return "";
-      const details = def.settings
-        .map((st) => {
-          const v = c.settings[st.key];
-          if (st.type === "boolean") return `${st.label}: ${v ? "Yes" : "No"}`;
-          const opt = st.options?.find((o) => o.id === v);
-          return `${st.label}: ${opt ? opt.label : v}`;
-        })
-        .join(", ");
-      return `${def.label} (${details})`;
+      const fabricLine =
+        def.needsFabric && c.fabric
+          ? ` — Tessuto: ${c.fabric === "altro" ? c.fabricCustom || "Altro" : FABRIC_OPTIONS.find((fo) => fo.id === c.fabric)?.label || c.fabric}`
+          : "";
+      return `${def.label}${fabricLine}`;
     })
     .join("\n");
 
@@ -1212,8 +1429,8 @@ async function submitOrder() {
       contact: [instagram, phone].filter(Boolean).join(" / ") || "Non fornito",
       note: notes.trim() || "Nessuna",
       capo:
-        garmentLabel +
-        (modelLabel ? " — " + modelLabel : "") +
+        catLabel +
+        (typeLabel ? " — " + typeLabel : "") +
         (s.brand ? " (" + s.brand + ")" : ""),
       modifiche: custLines || "Nessuna modifica",
       totale: "€" + total.toFixed(2),
@@ -1223,7 +1440,7 @@ async function submitOrder() {
     render();
   } catch (e) {
     s.submitting = false;
-    if (errEl) errEl.textContent = "Error: " + e.message;
+    if (errEl) errEl.textContent = "Errore: " + e.message;
     render();
   }
 }
@@ -1253,9 +1470,10 @@ export function initConfiguratore() {
 
   if (params.garment) {
     s.hasGarment = false;
-    s.garmentType = params.garment;
+    if (params.garment === "jeans") s.garmentCategory = "jeans";
+    else s.garmentCategory = "maglia";
     s.basePrice = parseFloat(params.basePrice) || 0;
-    s.model = GARMENT[params.garment]?.models[0]?.id || null;
+    s.customizations = [];
     s.step = "customize";
     render();
     return;

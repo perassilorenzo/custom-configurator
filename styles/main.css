@@ -4698,3 +4698,23 @@ html.dark-mode .cfg-search-bar input {
 html.dark-mode .cfg-search-bar input::placeholder {
   color: var(--text-tertiary);
 }
+
+/* ---- cust card image ---- */
+.cfg-cust-card {
+  flex-wrap: wrap;
+}
+.cfg-cust-card-image {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cfg-cust-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
