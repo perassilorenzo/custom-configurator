@@ -1651,6 +1651,17 @@ export function initCreator() {
       });
     });
 
+  /* How-cards accordion (mobile) */
+  document.querySelectorAll(".waitlist-how-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const wasOpen = card.classList.contains("open");
+      document
+        .querySelectorAll(".waitlist-how-card.open")
+        .forEach((c) => c.classList.remove("open"));
+      if (!wasOpen) card.classList.add("open");
+    });
+  });
+
   /* Waitlist popups */
   const popupContent = {
     requisiti: `
