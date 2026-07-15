@@ -228,8 +228,17 @@ export function initHome() {
   document.querySelectorAll("[data-faq] .faq-question").forEach((btn) => {
     btn.addEventListener("click", () => {
       const expanded = btn.getAttribute("aria-expanded") === "true";
+      const item = btn.closest(".faq-item");
+      document.querySelectorAll(".faq-item.open").forEach((openItem) => {
+        if (openItem !== item) {
+          openItem.classList.remove("open");
+          openItem
+            .querySelector(".faq-question")
+            ?.setAttribute("aria-expanded", "false");
+        }
+      });
       btn.setAttribute("aria-expanded", String(!expanded));
-      btn.closest(".faq-item")?.classList.toggle("open");
+      item?.classList.toggle("open");
     });
   });
 }
