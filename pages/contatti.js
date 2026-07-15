@@ -35,30 +35,30 @@ export function renderContatti() {
 
       <div>
         <div class="contact-channels">
-          <a href="https://instagram.com/diario_di_uno_09" target="_blank" rel="noopener noreferrer" class="contact-channel">
+          <div class="contact-channel">
             <div>
               <div class="label">Instagram</div>
-              <div class="desc">Seguimi per aggiornamenti sul progetto</div>
+              <div class="desc">@diario_di_uno_09</div>
             </div>
-          </a>
-          <a href="https://github.com/perassilorenzo" target="_blank" rel="noopener noreferrer" class="contact-channel">
+          </div>
+          <div class="contact-channel">
             <div>
               <div class="label">GitHub</div>
-              <div class="desc">Codice e progetti open source</div>
+              <div class="desc">perassilorenzo</div>
             </div>
-          </a>
-          <a href="https://www.linkedin.com/in/perassilorenzo" target="_blank" rel="noopener noreferrer" class="contact-channel">
+          </div>
+          <div class="contact-channel">
             <div>
               <div class="label">LinkedIn</div>
-              <div class="desc">Profilo professionale</div>
+              <div class="desc">Lorenzo Perassi</div>
             </div>
-          </a>
-          <a href="mailto:lorenzo@example.com" class="contact-channel">
+          </div>
+          <div class="contact-channel">
             <div>
               <div class="label">Email diretta</div>
               <div class="desc">lorenzo@example.com</div>
             </div>
-          </a>
+          </div>
         </div>
       </div>
     </div>
