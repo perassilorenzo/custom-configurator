@@ -120,7 +120,7 @@
     <script type="module">
       import { route, init, afterRender } from "./utils/router.js";
       import { renderNav, initNav, reinitNav } from "./components/navbar.js";
-      import { renderFooter } from "./components/footer.js";
+      import { renderFooter, initFooter } from "./components/footer.js";
       import { renderHome, initHome } from "./pages/home.js";
       import {
         renderConfiguratore,
@@ -157,7 +157,10 @@
 
       init(document.getElementById("app"));
       initNav();
-      afterRender(reinitNav);
+      afterRender(() => {
+        reinitNav();
+        initFooter();
+      });
     </script>
   </body>
 </html>

@@ -1,3 +1,12 @@
+let _hoverCount = 0;
+
+const _quotes = [
+  "Zuckerberg? Sounds Irish.",
+  "Zuckerberg? Sounds Irish.",
+  "Zuckerberg? Sounds Irish.",
+  "Drop the The. Just Facebook.",
+];
+
 export function renderFooter() {
   return `
 <footer>
@@ -30,8 +39,21 @@ export function renderFooter() {
       </div>
     </div>
     <div class="footer-bottom" style="text-align:center;justify-content:center">
-      <span>A Lorenzo Perassi Production</span>
+      <span class="footer-production" data-footer-easter>A Lorenzo Perassi Production</span>
     </div>
   </div>
 </footer>`;
+}
+
+export function initFooter() {
+  document.querySelectorAll("[data-footer-easter]").forEach((el) => {
+    el.addEventListener("mouseenter", () => {
+      const q = _quotes[Math.min(_hoverCount, _quotes.length - 1)];
+      _hoverCount++;
+      el.setAttribute("data-tooltip", q);
+    });
+    el.addEventListener("mouseleave", () => {
+      el.removeAttribute("data-tooltip");
+    });
+  });
 }
