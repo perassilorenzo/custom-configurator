@@ -2567,14 +2567,14 @@ footer a:hover {
 .creator-grid-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 10px;
+  gap: 16px;
   margin-top: 20px;
 }
 .creator-list-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 16px;
+  padding: 20px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   transition: all 0.15s;
@@ -2586,8 +2586,8 @@ footer a:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 .creator-list-avatar {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
   border: 2px solid var(--border);
   overflow: hidden;
@@ -3372,8 +3372,8 @@ footer a:hover {
 .creator-list-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 16px;
+  padding: 20px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   transition: all 0.15s;
@@ -4721,7 +4721,7 @@ html.dark-mode .cfg-search-bar input::placeholder {
 
 /* ---- Waitlist ---- */
 .waitlist-full {
-  padding: 20px 0;
+  padding: 10px 0;
 }
 .waitlist {
   max-width: 900px;
