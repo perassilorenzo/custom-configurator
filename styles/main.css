@@ -234,9 +234,54 @@ nav .container {
 }
 .mobile-toggle {
   display: none;
-  font-size: 22px;
-  color: var(--text);
-  padding: 4px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+.mobile-toggle span,
+.mobile-toggle span::before,
+.mobile-toggle span::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.3s ease;
+}
+.mobile-toggle span {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.mobile-toggle span::before {
+  content: "";
+  top: -6px;
+  left: 0;
+  transform: none;
+}
+.mobile-toggle span::after {
+  content: "";
+  top: 6px;
+  left: 0;
+  transform: none;
+}
+.mobile-toggle[aria-expanded="true"] span {
+  background: transparent;
+}
+.mobile-toggle[aria-expanded="true"] span::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+.mobile-toggle[aria-expanded="true"] span::after {
+  top: 0;
+  transform: rotate(-45deg);
 }
 @media (max-width: 768px) {
   .nav-links {
@@ -258,7 +303,9 @@ nav .container {
     padding: 12px 20px;
   }
   .mobile-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -5139,5 +5186,119 @@ html.dark-mode .cfg-search-bar input::placeholder {
   .waitlist-popup {
     padding: 24px;
     max-height: 90vh;
+  }
+
+  /* About section: roadmap first, developer after */
+  .about-inline {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 32px;
+    padding: 24px;
+  }
+  .about-tags {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Footer: single column, proper mobile */
+  footer {
+    margin-top: 80px;
+    padding: 40px 0 24px;
+  }
+  footer .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  footer p,
+  footer a {
+    line-height: 1.8;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  /* Filters inline with search */
+  .creator-list-toolbar {
+    margin-top: -16px;
+    margin-bottom: 16px;
+  }
+
+  /* Card customizer: centered, narrower */
+  .creator-grid-list {
+    grid-template-columns: 1fr;
+  }
+  .creator-list-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 16px;
+  }
+  .creator-list-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .creator-list-card-city {
+    justify-content: center;
+  }
+  .creator-list-card-tags {
+    justify-content: center;
+  }
+
+  /* Waitlist how-cards: accordion on mobile */
+  .waitlist-how-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .waitlist-how-card {
+    border-bottom: none;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    cursor: pointer;
+    position: relative;
+  }
+  .waitlist-how-card:first-child {
+    border-top: none;
+  }
+  .waitlist-how-card .waitlist-step-num {
+    pointer-events: none;
+  }
+  .waitlist-how-card h4 {
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .waitlist-how-card h4::after {
+    content: "\\25BC";
+    font-size: 10px;
+    color: var(--text-tertiary);
+    transition: transform 0.3s ease;
+  }
+  .waitlist-how-card.open h4::after {
+    transform: rotate(180deg);
+  }
+  .waitlist-how-card > p,
+  .waitlist-how-card > ul,
+  .waitlist-how-card > .waitlist-tags,
+  .waitlist-how-card > .waitlist-note {
+    display: none;
+  }
+  .waitlist-how-card.open > p,
+  .waitlist-how-card.open > ul,
+  .waitlist-how-card.open > .waitlist-tags,
+  .waitlist-how-card.open > .waitlist-note {
+    display: block;
+  }
+
+  /* Contact channels: no links on mobile */
+  .contact-channel {
+    pointer-events: none;
+    border-color: var(--border);
+  }
+  .contact-channels {
+    margin-top: 16px;
   }
 }
