@@ -868,6 +868,15 @@ function renderList() {
         </div>
       </div>
     </div>
+    <div class="customizer-cta">
+      <div class="container">
+        <div class="customizer-cta-inner">
+          <h3>Sei un customizer?</h3>
+          <p>Unisciti alla community e fai conoscere il tuo lavoro a chi cerca capi unici e personalizzati.</p>
+          <a href="#waitlist-form" class="cfg-btn cfg-btn-primary">Diventa un Customizer</a>
+        </div>
+      </div>
+    </div>
     <div class="waitlist-full">
       <div class="container">
         ${renderWaitlistForm()}
