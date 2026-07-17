@@ -429,7 +429,6 @@ footer a:hover {
 .footer-production {
   position: relative;
   cursor: default;
-  font-style: italic;
 }
 .footer-production[data-tooltip]::after {
   content: attr(data-tooltip);
@@ -457,10 +456,49 @@ footer a:hover {
     transform: translateX(-50%) translateY(0);
   }
 }
+@media (max-width: 768px) {
+  footer {
+    margin-top: 80px;
+  }
+}
 @media (max-width: 480px) {
   footer {
     margin-top: 80px;
-    padding: 40px 0 20px;
+    padding: 40px 0 24px;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    text-align: center;
+  }
+  .footer-brand p {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .footer-nav {
+    align-items: center;
+  }
+  .footer-nav a {
+    padding: 6px 0;
+  }
+  .footer-social h4 {
+    text-align: center;
+  }
+  .social-links {
+    justify-content: center;
+    gap: 14px;
+  }
+  .social-link {
+    width: 48px;
+    height: 48px;
+  }
+  .social-link svg {
+    width: 22px;
+    height: 22px;
+  }
+  .footer-bottom {
+    margin-top: 28px;
+    padding-top: 16px;
   }
 }
 
