@@ -514,6 +514,31 @@ footer a:hover {
     margin-top: 28px;
     padding-top: 16px;
   }
+
+  /* Container: tighter padding */
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Configurator grids: single column */
+  .cfg-choice-grid,
+  .cfg-type-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Config preview: reduce padding */
+  .config-preview {
+    padding: 32px 16px;
+    min-height: 250px;
+  }
+
+  /* Configurator add-dropdown: full width */
+  .cfg-add-dropdown {
+    min-width: 0;
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
 }
 
 /* ---- hero ---- */
@@ -1099,6 +1124,23 @@ footer a:hover {
   align-items: center;
   text-align: center;
   position: relative;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.step:hover {
+  color: var(--accent);
+}
+.step:hover .step-dot {
+  background: var(--accent);
+  color: #fff;
+}
+.step-content h3 {
+  color: inherit;
+  transition: color 0.2s;
+}
+.step:hover .step-content h3 {
+  color: var(--accent);
 }
 .step-dot {
   width: 36px;
@@ -1143,6 +1185,7 @@ footer a:hover {
     flex-direction: row;
     text-align: left;
     gap: 16px;
+    padding: 12px 0;
   }
   .step-dot {
     margin-bottom: 0;
@@ -3561,20 +3604,6 @@ footer a:hover {
 .creator-list-search-input::placeholder {
   color: var(--text-tertiary);
 }
-
-/* --- Filters --- */
-.creator-list-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-.creator-filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-}
 .creator-filter-label {
   font-family: var(--font-heading);
   font-size: 10px;
@@ -3814,6 +3843,9 @@ footer a:hover {
 /* ==================== FILTER GROUPS ==================== */
 
 .creator-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   margin-bottom: 24px;
 }
 
@@ -5488,11 +5520,7 @@ html.dark-mode .cfg-search-bar input::placeholder {
     display: block;
   }
 
-  /* Contact channels: no links on mobile */
-  .contact-channel {
-    pointer-events: none;
-    border-color: var(--border);
-  }
+  /* Contact channels */
   .contact-channels {
     margin-top: 16px;
   }
