@@ -883,7 +883,7 @@ function renderSummary() {
 
   return `
     <div class="cfg-summary">
-      <div class="cfg-summary-preview"><img src="" alt="Anteprima" class="cfg-preview-img"></div>
+      <div class="cfg-summary-preview"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2 12 5.5 8 2l-4.38 1.46a2 2 0 00-1.34 1.86v14.36A2 2 0 004.62 21.54L8 20l4 3.5 4-3.5 3.38 1.54a2 2 0 002.34-1.86V5.32a2 2 0 00-1.34-1.86z"/><line x1="12" y1="22" x2="12" y2="5.5"/></svg></div>
       <h3 class="cfg-summary-title">Il tuo progetto</h3>
       ${
         ci
@@ -1124,7 +1124,10 @@ function listen() {
       s.hasGarment = false;
       const base = t.dataset.chooseBase;
       if (base === "jeans") s.garmentCategory = "jeans";
-      else s.garmentCategory = "maglia";
+      else {
+        s.garmentCategory = "maglia";
+        s.garmentType = base;
+      }
       s.basePrice = parseFloat(t.dataset.basePrice) || 0;
       s.customizations = [];
       s.step = "customize";
