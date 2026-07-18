@@ -491,7 +491,7 @@ function renderStepStart() {
         <button class="cfg-choice-card${s.hasGarment === false ? " active" : ""}" type="button" data-has-garment="false">
           <span class="cfg-choice-icon">✕</span>
           <span class="cfg-choice-label">No</span>
-          <span class="cfg-choice-desc">Voglio creare da zero</span>
+          <span class="cfg-choice-desc">Scegli dalla collezione del customizer</span>
         </button>
       </div>
     </div>`;
@@ -505,9 +505,9 @@ function renderStepNoGarment() {
   return `
     <div class="cfg-step">
       <div class="cfg-step-header">
-        <span class="cfg-step-num">Parti da zero</span>
-        <h2>Crea da zero</h2>
-        <p>${ci ? `Scegli un capo base dalla collezione di <strong>${escHtml(ci.name)}</strong> per iniziare.` : "Trova un professionista, scegli un capo dalla sua collezione e costruisci il tuo pezzo unico."}</p>
+        <span class="cfg-step-num">Scegli il capo</span>
+        <h2>Scegli dalla collezione</h2>
+        <p>${ci ? `Seleziona un capo base dalla collezione di <strong>${escHtml(ci.name)}</strong> per iniziare la personalizzazione.` : "Trova un professionista, scegli un capo dalla sua collezione e costruisci il tuo pezzo unico."}</p>
       </div>
       ${
         items.length
