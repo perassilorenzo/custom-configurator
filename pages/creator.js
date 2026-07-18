@@ -571,7 +571,7 @@ function renderProfileSidebar(c) {
         <div class="creator-sidebar-info">
           <div class="creator-sidebar-info-item">
             <span class="creator-sidebar-info-label">Portfolio</span>
-            <a href="${esc(links.portfolio)}" target="_blank" class="creator-sidebar-info-value">perassilorenzo.com</a>
+            <a href="${esc(links.portfolio)}" target="_blank" class="creator-sidebar-info-value">${esc(links.portfolio.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a>
           </div>
         </div>`
           : ""
@@ -588,6 +588,7 @@ function renderProfile(c) {
           <div class="creator-layout">
             <div class="creator-main-col">
               ${renderAbout(c)}
+              ${renderServices(c)}
               ${renderSkills(c)}
               ${renderAvailableForCustomization(c)}
               ${renderProducts(c)}
