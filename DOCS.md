@@ -16,6 +16,7 @@ Customly è una **single-page application (SPA)** per la personalizzazione di ab
 - L'utente naviga tra le pagine via URL puliti (`/customizers`, `/configuratore`)
 - Il router intercetta i cambiamenti di URL via History API (`pushState`), carica la pagina giusta e la inserisce nel DOM
 - Per il deploy su GitHub Pages, un file `404.html` gestisce il redirect delle URL dirette
+- Per il deploy su Cloudflare Pages, un file `_redirects` gestisce il routing SPA (regola `/* /index.html 200`)
 - Ogni pagina è un modulo JavaScript che esporta due funzioni: `render*(ctx)` per generare l'HTML e `init*(ctx)` per attaccare gli eventi
 - I dati dei customizer vivono in file JavaScript separati, importati come moduli
 - I meta tag (title, description, Open Graph, canonical) si aggiornano dinamicamente per ogni pagina
@@ -26,6 +27,7 @@ Customly è una **single-page application (SPA)** per la personalizzazione di ab
 |---|---|
 | `index.html` | Shell minima — carica il router e registra le route |
 | `404.html` | Redirect trick per GitHub Pages SPA routing |
+| `_redirects` | Redirect rule per Cloudflare Pages SPA routing (`/* /index.html 200`) |
 | `robots.txt` | Regole crawling per motori di ricerca |
 | `sitemap.xml` | Sitemap XML per SEO |
 | `llms.txt` | Informazioni leggibili da motori AI (GEO) |
@@ -47,6 +49,7 @@ customly/
 │
 ├── index.html                          # Entry point SPA
 ├── 404.html                            # GitHub Pages SPA redirect trick
+├── _redirects                          # Cloudflare Pages SPA redirect rule
 ├── robots.txt                          # Regole crawling motori di ricerca
 ├── sitemap.xml                         # Sitemap XML per SEO
 ├── llms.txt                            # Info leggibili da AI (GEO)
